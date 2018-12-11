@@ -1,0 +1,17 @@
+{
+  "timeZone": "Etc/GMT",
+  "dependencies": {
+    "enabledAdvancedServices": [{
+      "userSymbol": "Drive",
+      "serviceId": "drive",
+      "version": "v2"
+    }],
+    "libraries": [{
+      "userSymbol": "lodash",
+      "libraryId": "1UHPdknWjh63GaNo4A8skMpNEx4wsRDHrO3u6AgO6xHZrnUxKQnqJeAZk",
+      "version": "1",
+      "developmentMode": true
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER"
+}
