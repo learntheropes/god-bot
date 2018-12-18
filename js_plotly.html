@@ -1,0 +1,109 @@
+<script>
+
+var _ = _u;
+
+function renderChart(series, userObject) {
+  
+ var data = getPlotlyCandleStick(series, userObject);
+ var layout = getPlotlyLayout(series, userObject);
+
+ 
+ Plotly.plot('chart', data, layout, {
+   displayModeBar: false,
+   displaylogo: false,
+   responsive: true
+ });
+};
+
+function getPlotlyCandleStick(series,userObject) {
+
+  series.date = series.timestamp.map(
+    function(e) {
+      return new Date(e);
+    }
+  );
+
+  var candles = {
+    x : series.date,
+    name: 'ohlc',
+    type: 'candlestick', 
+    xaxis: 'x', 
+    yaxis: 'y'
+  };
+  
+  var candles = ['open','close','low','high'].reduce(function(obj, indicator) {
+    obj.candles[indicator] = obj.series[obj.tf + '_' + indicator]
+    return obj;
+  }, {candles: candles, series: series, tf: userObject.timeframe.value})['candles'];
+  
+  /*
+  var buy = {
+    x: series.date,
+    y: [],
+    type: 'scatter',
+    mode: 'markers',
+    marker: { size: 9 },
+    name : 'buy'
+  }
+  
+  var sell = {
+    x: series.date,
+    y: [],
+    type: 'scatter',
+    mode: 'markers',
+    marker: { size: 7 },
+    name: 'sell'
+  }
+
+  return [candles, buy, sell];
+  */
+  
+  return [candles];
+}
+
+function getPlotlyLayout(series, userObject) {
+
+  series.range = [
+    new Date(_.head(series.timestamp)),
+    new Date(_.last(series.timestamp))
+  ];
+  
+  series.min_max = [
+    _.min(series[userObject.timeframe.value + '_low']),
+    _.max(series[userObject.timeframe.value + '_high'])
+  ];
+
+  series.title = userObject.exchange.value
+  + ' ' + userObject.pair.value
+  + ' ' + userObject.timeframe.value;
+ 
+  return {
+    title: series.title,
+    dragmode: 'zoom', 
+    margin: {
+      r: 10, 
+      t: 25, 
+      b: 40, 
+      l: 60
+    }, 
+    showlegend: false, 
+    xaxis: {
+      autorange: true, 
+      domain: [0, 1], 
+      range: series.range, 
+      rangeslider: {
+        visible: false
+      }, 
+      title: 'Date', 
+      type: 'date'
+    }, 
+    yaxis: {
+      autorange: true, 
+      domain: [0, 1], 
+      range: series.min_max, 
+      type: 'linear'
+    },
+  };
+}
+</script>
+

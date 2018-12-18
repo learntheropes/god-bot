@@ -1,0 +1,27 @@
+        <form id='candlestricksForm'>
+          <select name='exchange'>
+            <option value="exchange" disabled selected>Exchange</option>
+            <option value="bitfinex">Bitfinex</option>
+          </select>
+          <select name='pair'>
+            <option value="" disabled selected>Pair</option>
+            <option value="tBTCUSD_Apr2013_Aug2016">BTC/USD Apr2013 Aug2016 (pre hack)</option>
+            <option value="tBTCUSD">BTC/USD post Aug2016 (post hack)</option>
+            <option value="tETHUSD">ETH/USD</option>
+            <option value="tBTCUSD_debug">BTC/USD_debug</option>
+          </select>
+          <select name='timeframe'>
+            <option value="" disabled selected>Timeframe</option>
+            <option value="15m">15 minutes</option>
+            <option value="30m">30 minutes</option>
+            <option value="1h">1 hour</option>
+            <option value="2h">2 hours</option>
+            <option value="4h">4 hours</option>
+            <option value="1d">1 day</option>
+            <option value="7d">7 days</option>
+          </select>
+          <input type="text" name="from" placeholder="From Timestamp" size="13">
+          <input type="text" name="to" placeholder="To Timestamp" size="13">
+          <input type='button' value='Load data' onclick='google.script.run.withFailureHandler(onFailure).withSuccessHandler(renderChart).withUserObject(this.parentNode).getSeriesFromSheet(this.parentNode)'>
+       </form>
+

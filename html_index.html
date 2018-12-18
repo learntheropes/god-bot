@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= HtmlService.createHtmlOutputFromFile('html_cdn').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('js_on').getContent(); ?>
+  </head>
+  <body>
+    <div class="content">
+      <?!= HtmlService.createHtmlOutputFromFile('html_strategyNew').getContent(); ?>
+    </div>
+    <?!= HtmlService.createHtmlOutputFromFile('js_strategyNew').getContent(); ?>
+  </body>
+</html>
+
+

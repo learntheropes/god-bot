@@ -1,0 +1,161 @@
+<script>
+
+  document.mainTf = '';
+  document.additionalTfs = [];
+  document.allTfs = [];
+  
+  var tfs = ['15m','30m','1h','2h','4h','1d','7d']
+  
+  var indicatorsDefault = {
+    BOLL: {timeperiod: 20,sdn: 2},
+    CCI: {timeperiod: 26},
+    DMA: {timeperiodShort: 10,timeperiodLong: 50},
+    DMI: {timeperiod: 14},
+    SMA: {timeperiod: 30},
+    EMA: {timeperiod: 30},
+    MACD: {fastperiod: 12,slowperiod: 26,signalperiod: 9},
+    MTM: {periods: 9},
+    OBV : {},
+    ROC: {periods: 12},
+    RSI: {periods: 14},
+    TRIX: {periods: 12}
+  }
+    
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.collapsible');
+    var options = {onOpenStart: loadHtmlActions};
+    var instances = M.Collapsible.init(elems, options);
+  });
+  
+  
+  function loadHtmlActions() {
+    loadMainTfHtml();
+    // loadIndicatorsAddHtml();
+    fooooo()
+  }
+  
+  function loadMainTfHtml(){
+    mainTfForm.innerHTML = '';
+    tfs.map(function(tf) {
+      var tfRadio = document.createElement('div');
+      tfRadio.innerHTML = '<p><label><input name="mainTf" type="radio"  class="with-gap" value="'+ tf + '" /><span>' + tf + '</span></label></p>'
+      this.form.appendChild(tfRadio);
+    }, {form: document.getElementById('mainTfForm')});
+  };
+  
+  
+  function mainTfActions() {
+    var mainTf = getMainTfUserSelection();
+    if (mainTf) {
+      document.mainTf = mainTf;
+      document.allTfs.push(mainTf);
+      LoadAdditionalTfsHtml(mainTf);
+    }
+  }
+  
+  function getMainTfUserSelection() {
+    return Array.prototype.slice.call(document.getElementsByName('mainTf'),0).filter(function(radio) {
+      return radio.checked;
+    }).map(function(radio) {
+      return radio.value;
+    })[0];
+  }
+  
+  function LoadAdditionalTfsHtml(mainTf) {
+    additionalTfForm.innerHTML = '';
+    tfs.filter(function(tf) {
+      return document.mainTf !== tf;
+    }).map(function(tf) {
+      var tfCheckboxes = document.createElement('div');
+      tfCheckboxes.innerHTML = '<p><label><input name="additionalTf" type="checkbox"  class="filled-in" value="'+ tf + '" /><span>' + tf + '</span></label></p>'
+      this.form.appendChild(tfCheckboxes);
+    }, {form: document.getElementById('additionalTfForm')});
+  }
+  
+  function additionalTfActions() {
+    var additionalTfs = getAdditionalTfUserSelection()
+    document.additionalTfs = additionalTfs;
+    document.allTfs = document.allTfs.concat(additionalTfs);
+  }
+  
+  function getAdditionalTfUserSelection() {
+    return Array.prototype.slice.call(document.getElementsByName('additionalTf'),0).filter(function(checkbox) {
+      return checkbox.checked;
+    }).map(function(checkbox) {
+      return checkbox.value;
+    });
+  }
+  
+  function loadIndicatorsAddHtml() {
+    var select = document.createElement('select');
+    var option = document.createElement('option');
+    // option.setAttribute('disabled', true);
+    // option.setAttribute('selected', true);
+    option.innerText = 'Add an indicator';
+    select.appendChild(option);
+    Object.keys(indicatorsDefault).map(function(key) {
+      // select.innerHTML += '<option value="' + key + '">' + key + '</option>'
+    })
+    document.getElementById('indicatorsAddForm').appendChild(select)
+  }
+  
+  function addIndicatorToList() {
+    //var newIndicator = '<form id="indicatorsAddForm" action="#"> </form>'
+    //document.getElementById('indicatorsListForm').appendChild(newIndicator)
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+function setindicators(){
+  function indicatorOptions() {
+    return Object.keys(document.indicators).sort().map(function(indicator){
+      return '<option value="' + indicator + '">' + indicator + '</option>';   
+    })
+  };
+    
+  document.getElementById("addIndicator").innerHTML = '<select id="indicatorDropdown" onchange="addI(this.value)">'
+  + '<option value="" disabled selected>Add Indicator</option>'
+  + indicatorOptions() + '</select>';
+};
+  
+function addI(input) {
+
+  var indicator = document.createElement('div');
+  indicator.className = 'indicator';
+  indicator.id = input
+        
+  var settings = Object.keys(window.indicators[input]).map(function(key) {
+    var setting = document.createElement('div');
+    setting.className = 'setting';
+    setting.innerHTML = key + ': <input type="text" size="3" name="' + key + '" value="' + window.indicators[input][key] + '" />'
+    this.indicator.appendChild(setting);
+  }, {indicator: indicator})
+    
+  indicator.innerHTML = input + settings + '<input type="button" value="Remove" onclick="removeRow(this)">'
+  document.getElementById('indicatorsList').appendChild(indicator);
+}
+
+function removeRow(input) {
+  document.getElementById('indicatorsList').removeChild(input.parentNode);
+}
+
+function timeframeSelect(){
+  var timeframeSelect = document.createElement('div');
+  timeframeSelect.className = 'timeframes';
+  var arr = ['15m','30m','1h','2h','4h','1d','7d'].map(function(tf) {
+   
+  })
+  timeframeSelect.innerHTML = '<select name="timeframe">' +
+    '<option value="" disabled selected>Timeframe</option>' +
+    arr + '</select>';
+  indicator.appendChild(timeframeSelect);   
+}
+</script>
+

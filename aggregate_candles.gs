@@ -21,12 +21,12 @@ function get_aggregation_amount_(tf) {
       return 12*2;
       break;
     case '4h':
-      return 12*4;
+      return 12*4;nomics
       break;
     case '1d':
       return 12*24;
       break;
-    case '1w':
+    case '7d':
       return 12*24*7;
       break;
     default:
