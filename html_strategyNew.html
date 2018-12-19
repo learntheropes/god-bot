@@ -1,44 +1,24 @@
 <div id="strategyNew">
-  <ul class="collapsible">
-    <li>
-      <div class="collapsible-header">Main Timeframe</div>
-      <div class="collapsible-body">
-        <form id="mainTfForm" action="#" onchange="mainTfActions()"></form>
-      </div>
-    </li>
-    <li>
-      <div class="collapsible-header">Additional Timeframes</div>
-      <div class="collapsible-body">
-        <form id="additionalTfForm" action="#" onchange="additionalTfActions()"></form>
-      </div>
-    </li>
-    <li>
-      <div class="collapsible-header">Indicators</div>
-      <div class="collapsible-body"><span>
-      
-      <div class="fixed-action-btn">
-  <a class="btn-floating btn-large red">
-    <i class="large material-icons">mode_edit</i>
-  </a>
-  <ul>
-    <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-    <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-    <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-    <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-  </ul>
+<ul>
+<li>
+<span><h2>1. Main Timeframe</h2></span>
+<form id="mainTfForm" action="#" onchange="mainTfActions()"></form>
+</li>
+<li>
+<span><h3>2. Additional Timeframes</h3></span>
+<form id="additionalTfForm" action="#" onchange="additionalTfActions()"></form>
+</li>
+<li>
+<span><h3>3. Indicators</h3></span>
+<form id="indicatorsAddForm" onclick="addIndicatorToList()"></form>
+<div id="indicatorsListDiv">
 </div>
-      
-      </span></div>
-    </li>   
-    <li>
-      <div class="collapsible-header">Conditions</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header">Actions</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-  </ul>
-
+</li>
+<li>
+<span><h3>4. Conditions</h3></span>
+</li>
+<li>
+<span><h3>5. Actions</h3></span>
+</li>
+</ul>
 </div>
-
