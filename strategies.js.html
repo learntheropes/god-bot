@@ -1,0 +1,291 @@
+
+<script>
+
+// FORM LIBRARY
+  
+  // type = 'radio' or 'checkbox'
+  function makeChoice(type, parent_name, label_name, choices_array, action){
+    
+    var parent = document.getElementById(parent_name);
+    parent.innerHTML = '';
+    
+    var label = document.createElement('div');
+    label.setAttribute('class','label');
+    label.innerText = label_name;
+    
+    var control = document.createElement('div');
+    control.setAttribute('class','control');
+    if (action) control.setAttribute('onchange', action);
+    
+    choices_array.forEach(function(el) {
+    
+      var p = document.createElement('p');
+      
+      var label = document.createElement('label');
+      label.setAttribute('class',type);
+      
+      var input = document.createElement('input');
+      input.setAttribute('type', type);
+      input.setAttribute('name', parent_name + 'Inputs');
+      input.setAttribute('value', el);
+      
+      label.appendChild(input);
+      
+      var span = document.createElement('span');
+      span.innerText = el;
+      label.appendChild(span);
+      
+      p.appendChild(label);
+      this.control.appendChild(p);
+
+    }, {control: control});
+    
+    parent.appendChild(label);
+    parent.appendChild(control);
+  };
+  
+  
+  
+  function getChoiceInput(div_name) {
+  
+    var div = document.getElementsByName(div_name + 'Inputs');
+    var arr = Array.prototype.slice.call(div,0);
+
+    return arr.filter(function(choice) {
+    
+      return  choice.checked;
+    }).map(function(choice) {
+    
+      return choice.value;
+    });
+  };
+
+
+
+  function disableChoice(choice, div_name) {
+    var divs = document.getElementsByName(div_name + 'Inputs');
+    divs.forEach(function(input) {
+      if ( input.value === choice) {
+        input.disabled = true;
+      }
+      else {
+        input.disabled = false;
+      }
+    });
+  }
+  
+  
+  
+  function unselectChoice(choice, div_name) {
+    var divs = document.getElementsByName(div_name + 'Inputs');
+    divs.forEach(function(input) {
+      if ( input.value === choice) {
+        input.checked = false;
+      }
+    });    
+  }
+
+  function makeLabel(parent_name, label_name) {
+    var parent = document.getElementById(parent_name);
+    var label = document.createElement('div');
+    label.setAttribute('class','label');
+    label.innerText = label_name;
+    parent.appendChild(label);
+  }
+
+  function makeDropdown(parent_name, choices_array, action){
+
+    var parent = document.getElementById(parent_name);
+    
+    var dropdown_content = document.createElement('div');
+    dropdown_content.setAttribute('class', 'dropdown-content')
+    
+    choices_array.forEach(function(el) {
+          
+      var a = document.createElement('a');
+      if (action) a.setAttribute('onclick', action);
+      a.setAttribute('value', el);
+      a.setAttribute('class','dropdown-item');
+      a.innerText = el;
+      
+      this.content.appendChild(a);
+
+    }, {content: dropdown_content});
+                
+    var dropdown = document.createElement('div');
+    dropdown.setAttribute('class', 'dropdown');
+    
+    var dropdown_trigger = document.createElement('div');
+    dropdown_trigger.setAttribute('class', 'dropdown-trigger');
+    
+    var button = document.createElement('button');
+    button.setAttribute('class','button');
+    button.setAttribute('aria-haspopup','true');
+    button.setAttribute('aria-controls','dropdown-menu');
+    
+    var dropdown_menu = document.createElement('div');
+    dropdown_menu.setAttribute('class','dropdown-menu');
+    dropdown_menu.setAttribute('id','dropdown-menu');
+    dropdown_menu.setAttribute('role', 'menu');
+    
+    var txt = document.createElement('span');
+    txt.innerText = 'Indicators';
+        
+    var i = document.createElement('i');
+    i.setAttribute('class', 'fas fa-angle-down');
+    i.setAttribute('aria-hidden', 'true');
+    
+    var icon = document.createElement('span');
+    icon.setAttribute('class', 'icon is-small');
+    
+    icon.appendChild(i);
+    button.appendChild(txt);
+    button.appendChild(icon);
+    dropdown_trigger.appendChild(button);
+    dropdown_menu.appendChild(dropdown_content);
+    dropdown.appendChild(dropdown_trigger);
+    dropdown.appendChild(dropdown_menu);
+    parent.appendChild(dropdown);
+  };
+
+// END FORM LIBRARY
+
+  document.mainTimeframe = '';
+  document.additionalTimeframes = [];
+  document.allTimeframes = [];
+  document.indicators = {};
+  
+  var tfs = ['15m','30m','1h','2h','4h','1d','7d']
+  
+  var indicatorsDefault = {
+    BOLL: {timeperiod: 20,sdn: 2},
+    CCI: {timeperiod: 26},
+    DMA: {timeperiodShort: 10,timeperiodLong: 50},
+    DMI: {timeperiod: 14},
+    SMA: {timeperiod: 30},
+    EMA: {timeperiod: 30},
+    MACD: {fastperiod: 12,slowperiod: 26,signalperiod: 9},
+    MTM: {periods: 9},
+    OBV : {},
+    ROC: {periods: 12},
+    RSI: {periods: 14},
+    TRIX: {periods: 12}
+  }
+  
+  window.onload = function() {
+  
+    // Fill mainTimeframe, additionalTimeframes, indicatorNew
+    makeChoice('radio', 'mainTimeframe', 'Main Timeframe', tfs, 'mainTimeframeActions()');
+    makeChoice('checkbox', 'additionalTimeframes', 'Additional Timeframes', tfs, 'additionalTimeframesActions()');
+    makeLabel('indicatorNew', 'Add Indicator');
+    makeDropdown('indicatorNew', Object.keys(indicatorsDefault), 'addIndicatorActions(this.getAttribute("value"))');
+    
+    // onclick dropdowns
+    const button = document.querySelector('.button');
+    const dropdown = document.querySelector('.dropdown');
+    button.addEventListener('click', function() {
+      dropdown.classList.toggle('is-active');
+    });
+  }
+    
+  function mainTimeframeActions() {
+    var mainTimeframe = getChoiceInput('mainTimeframe');
+    document.mainTimeframe = mainTimeframe;
+    document.allTimeframes = document.additionalTimeframes.concat(mainTimeframe);
+    disableChoice(mainTimeframe[0], 'additionalTimeframes');
+    unselectChoice(mainTimeframe[0], 'additionalTimeframes')
+  }
+
+  function additionalTimeframesActions() {
+    var additionalTimeframes = getChoiceInput('additionalTimeframes');
+    document.additionalTimeframes = additionalTimeframes;
+    document.allTimeframes = document.mainTimeframe.concat(additionalTimeframes);
+  }
+  
+  function addIndicatorActions(input) {
+    console.log(input)
+  }
+  
+  function loadIndicatorsAddHtml() {
+    var select = makeDropdown("indicators", "Select", Object.keys(indicatorsDefault))
+    var parent = document.getElementById('indicatorsAddForm')
+    parent.innerText = "Add Indicator: "
+    parent.appendChild(select);
+    var save = document.createElement('a');
+    save.setAttribute('class', 'button is-small');
+    save.setAttribute('type','submit');
+    save.setAttribute('onclick','loadConditionsHtml()');
+    save.innerText = 'Save';
+    parent.appendChild(save);
+  }
+  
+  
+  
+  
+
+  
+  function addIndicatorToList() {
+  
+    function createInputText(indi) {
+    Object.keys(indicatorsDefault[indi]).map(function(key) {
+      var div = document.createElement('div');
+      div.setAttribute('class', 'field has-addons');
+      var p1 = document.createElement('p');
+       p1.setAttribute('class', 'control');
+       var a = document.createElement('a');
+       a.setAttribute('class', 'button is-static');
+       a.innerText = key
+       p1.appendChild(a)
+       div.appendChild(p1)
+       var p2 = document.createElement('p');
+       p2.setAttribute('class', 'control');
+       var input = document.createElement('input');
+       input.setAttribute('class', 'input');
+       input.setAttribute('type', 'text');
+       input.setAttribute('placeholder', indicatorsDefault[indi][key]);
+       div.appendChild(input);
+    })
+    };
+    
+    function createLabel(text) {
+      var label = document.createElement('element');
+      label.setAttribute('class','label is-normal');
+      label.innerText = text;
+      return label;
+    };
+    
+    function createField(set) {
+      var field = document.createElement('div');
+      field.setAttribute('class','field is-horizontal');
+      field.appendChild(createLabel(set.label));
+      field.appendChild(createInputText(set.placeholder));
+      return field;
+    };
+  
+    var indiName = document.getElementById('indicatorsDropdown').value;
+    var field = createField({type:'input',label: indiName,placeholder: placeholder})  
+
+    var form = document.createElement('form');
+    form.innerText = indicatorSlug;
+    var dropdownTfs = makeDropdown("indicatorTimeframe", "Select timeframe", document.allTfs)
+
+
+
+
+
+
+
+
+    var remove = document.createElement('span');
+    remove.setAttribute('class', 'button is-small');
+    remove.setAttribute('type', 'Submit');
+    remove.setAttribute('onclick', 'removeIndicator(this)');
+    remove.innerText = "Remove";
+    form.appendChild(remove);
+    document.getElementById('indicatorsListDiv').appendChild(form);
+  }
+
+  function removeIndicator(input) {
+    document.getElementById('indicatorsListDiv').removeChild(input.parentNode);
+  }
+</script>
