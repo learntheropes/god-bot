@@ -1,3 +1,6 @@
+// {"userSymbol": "Drive","serviceId": "drive","version": "v2" }
+
+/*
 function get_ss(ss_name) {
   var files = DriveApp.getFilesByName(ss_name);
   while (files.hasNext()) {
@@ -189,3 +192,4 @@ function getSeriesFromSheet(userObj) {
     [tf+'_close', tf+'_open', tf+'_low', tf+'_high']
   ).expose('series');
 };
+*/

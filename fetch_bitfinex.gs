@@ -1,3 +1,4 @@
+/*
 function deleteTrigger() {
   var triggers = ScriptApp.getProjectTriggers();
   ScriptApp.deleteTrigger(triggers[0]);
@@ -139,3 +140,4 @@ function concatAggregated(multiple_of, results) {
   return tf;    
 };
   
+*/

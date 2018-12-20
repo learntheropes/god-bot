@@ -12,15 +12,15 @@ function INDICATORS(ohlcv) {
   this.high = ohlcv.high;
   this.volume = ohlcv.volume;
   
-  function BOLL(high, low, close, timeperiod, sdn) {
-    if (!timeperiod) { timeperiod = 20; }
+  function BOLL(high, low, close, periods, sdn) {
+    if (!periods) { periods = 20; }
     if (!sdn) { sdn = 2; }
     var tp = [];
     for (var i = 0; i < close.length; i++) {
       tp.push((high[i] + low[i] + close[i]) / 3);
     }
-    var middleBand = SMA(tp, timeperiod);
-    var sd = standardDeviation(tp, timeperiod);
+    var middleBand = SMA(tp, periods);
+    var sd = standardDeviation(tp, periods);
     var upperBand = [];
     var lowerBand = [];
     for (var i = 0; i < close.length; i++) {
@@ -37,24 +37,24 @@ function INDICATORS(ohlcv) {
   };
   
   this.BOLL = function(settings) {
-    return BOLL(this.high, this.low, this.close, settings.timeperiod, settings.sdn);
+    return BOLL(this.high, this.low, this.close, settings.periods, settings.sdn);
   };
   
   
-  function CCI(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 26; }
-    var highestHigh = highest(high, timeperiod);
-    var lowestLow = lowest(low, timeperiod);
+  function CCI(high, low, close, periods) {
+    if (!periods) { periods = 26; }
+    var highestHigh = highest(high, periods);
+    var lowestLow = lowest(low, periods);
     var tp = [];
     for (var i = 0; i < close.length; i++) {
       tp.push((highestHigh[i] + lowestLow[i] + close[i]) / 3);
     }
-    var atp = SMA(tp, timeperiod);
+    var atp = SMA(tp, periods);
     var di = [];
     for (var i = 0; i < close.length; i++) {
       di.push(atp[i] - close[i]);
     }
-    var md = SMA(di, timeperiod);
+    var md = SMA(di, periods);
     var cci = [];
     for (var i = 0; i < close.length; i++) {
       cci.push((tp[i] - atp[i]) / (0.015 * md[i]));
@@ -63,14 +63,14 @@ function INDICATORS(ohlcv) {
   };
   
   this.CCI = function(settings) {
-    return CCI(this.high, this.low, this.close, settings.timeperiod);
+    return CCI(this.high, this.low, this.close, settings.periods);
   };
   
-  function DMA(close, timeperiodShort, timeperiodLong) {
-    if (!timeperiodShort) { timeperiodShort = 10; }
-    if (!timeperiodLong) { timeperiodLong = 50; }
-    var result1 = SMA(close, timeperiodShort);
-    var result2 = SMA(close, timeperiodLong);
+  function DMA(close, fastperiod, slowperiod) {
+    if (!fastperiod) { fastperiod = 10; }
+    if (!slowperiod) { slowperiod = 50; }
+    var result1 = SMA(close, fastperiod);
+    var result2 = SMA(close, slowperiod);
     var dif = [];
     for (var i = 0; i < close.length; i++) {
       dif.push(result1[i] - result2[i]);
@@ -79,12 +79,12 @@ function INDICATORS(ohlcv) {
   }
   
   this.DMA = function(settings) {
-    return DMA(this.close, settings.timeperiodShort, settings.timeperiodLong);
+    return DMA(this.close, settings.fastperiod, settings.slowperiod);
   };
   
   
-  function MINUS_DM(high, low, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function MINUS_DM(high, low, periods) {
+    if (!periods) { periods = 14; }
     var minusDM = [0];
     for (var i = 1; i < high.length; i++) {
       var deltaHigh = high[i - 1] - high[i];
@@ -101,8 +101,8 @@ function INDICATORS(ohlcv) {
     }
     return minusDM;
   }
-  function PLUS_DM(high, low, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function PLUS_DM(high, low, periods) {
+    if (!periods) { periods = 14; }
     var plusDM = [0];
     for (var i = 1; i < high.length; i++) {
       var deltaHigh = high[i - 1] - high[i];
@@ -119,8 +119,8 @@ function INDICATORS(ohlcv) {
     }
     return plusDM;
   }
-  function TR(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function TR(high, low, close, periods) {
+    if (!periods) { periods = 14; }
     var trueR = [high[0] - low[0]];
     for (var i = 1; i < high.length; i++) {
       var trueHigh = void 0;
@@ -141,8 +141,8 @@ function INDICATORS(ohlcv) {
     }
     return trueR;
   }
-  function PLUS_DI(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function PLUS_DI(high, low, close, periods) {
+    if (!periods) { periods = 14; }
     var plusDM = [0];
     var trueR = [high[0] - low[0]];
     for (var i = 1; i < high.length; i++) {
@@ -175,19 +175,19 @@ function INDICATORS(ohlcv) {
     }
     var plusDMSum = [];
     var trueRSum = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       plusDMSum.push(null);
       trueRSum.push(null);
     }
-    plusDMSum.push(plusDM.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    plusDMSum.push(plusDM.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    trueRSum.push(trueR.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    trueRSum.push(trueR.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    for (var i = timeperiod - 1; i < high.length; i++) {
-      plusDMSum.push(plusDMSum[i - 1] - plusDMSum[i - 1] / timeperiod + plusDM[i]);
-      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / timeperiod + trueR[i]);
+    for (var i = periods - 1; i < high.length; i++) {
+      plusDMSum.push(plusDMSum[i - 1] - plusDMSum[i - 1] / periods + plusDM[i]);
+      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / periods + trueR[i]);
     }
     var plusDI = [];
     for (var i = 0; i < close.length; i++) {
@@ -200,8 +200,8 @@ function INDICATORS(ohlcv) {
     }
     return plusDI;
   }
-  function MINUS_DI(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function MINUS_DI(high, low, close, periods) {
+    if (!periods) { periods = 14; }
     var minusDM = [0];
     var trueR = [high[0] - low[0]];
     for (var i = 1; i < high.length; i++) {
@@ -234,19 +234,19 @@ function INDICATORS(ohlcv) {
     }
     var minusDMSum = [];
     var trueRSum = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       minusDMSum.push(null);
       trueRSum.push(null);
     }
-    minusDMSum.push(minusDM.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    minusDMSum.push(minusDM.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    trueRSum.push(trueR.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    trueRSum.push(trueR.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    for (var i = timeperiod - 1; i < high.length; i++) {
-      minusDMSum.push(minusDMSum[i - 1] - minusDMSum[i - 1] / timeperiod + minusDM[i]);
-      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / timeperiod + trueR[i]);
+    for (var i = periods - 1; i < high.length; i++) {
+      minusDMSum.push(minusDMSum[i - 1] - minusDMSum[i - 1] / periods + minusDM[i]);
+      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / periods + trueR[i]);
     }
     var minusDI = [];
     for (var i = 0; i < close.length; i++) {
@@ -259,8 +259,8 @@ function INDICATORS(ohlcv) {
     }
     return minusDI;
   }
-  function DX(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function DX(high, low, close, periods) {
+    if (!periods) { periods = 14; }
     var minusDM = [0];
     var plusDM = [0];
     var trueR = [high[0] - low[0]];
@@ -298,24 +298,24 @@ function INDICATORS(ohlcv) {
     var plusDMSum = [];
     var minusDMSum = [];
     var trueRSum = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       plusDMSum.push(null);
       minusDMSum.push(null);
       trueRSum.push(null);
     }
-    plusDMSum.push(plusDM.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    plusDMSum.push(plusDM.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    minusDMSum.push(minusDM.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    minusDMSum.push(minusDM.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    trueRSum.push(trueR.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    trueRSum.push(trueR.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    for (var i = timeperiod - 1; i < high.length; i++) {
-      plusDMSum.push(plusDMSum[i - 1] - plusDMSum[i - 1] / timeperiod + plusDM[i]);
-      minusDMSum.push(minusDMSum[i - 1] - minusDMSum[i - 1] / timeperiod + minusDM[i]);
-      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / timeperiod + trueR[i]);
+    for (var i = periods - 1; i < high.length; i++) {
+      plusDMSum.push(plusDMSum[i - 1] - plusDMSum[i - 1] / periods + plusDM[i]);
+      minusDMSum.push(minusDMSum[i - 1] - minusDMSum[i - 1] / periods + minusDM[i]);
+      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / periods + trueR[i]);
     }
     var minusDI = [];
     var plusDI = [];
@@ -340,24 +340,24 @@ function INDICATORS(ohlcv) {
     }
     return dx;
   }
-  function ADX(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
-    return SMA(DX(high, low, close, timeperiod), timeperiod);
+  function ADX(high, low, close, periods) {
+    if (!periods) { periods = 14; }
+    return SMA(DX(high, low, close, periods), periods);
   }
-  function ADXR(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
-    var adx = ADX(high, low, close, timeperiod);
+  function ADXR(high, low, close, periods) {
+    if (!periods) { periods = 14; }
+    var adx = ADX(high, low, close, periods);
     var adxr = [];
-    for (var i = 0; i < timeperiod; i++) {
+    for (var i = 0; i < periods; i++) {
       adxr.push(null);
     }
-    for (var i = timeperiod; i < adx.length; i++) {
-      adxr.push((adx[i] - adx[i - timeperiod]) / 2);
+    for (var i = periods; i < adx.length; i++) {
+      adxr.push((adx[i] - adx[i - periods]) / 2);
     }
     return adxr;
   }
-  function DMI(high, low, close, timeperiod) {
-    if (!timeperiod) { timeperiod = 14; }
+  function DMI(high, low, close, periods) {
+    if (!periods) { periods = 14; }
     var minusDM = [0];
     var plusDM = [0];
     var trueR = [high[0] - low[0]];
@@ -395,24 +395,24 @@ function INDICATORS(ohlcv) {
     var plusDMSum = [];
     var minusDMSum = [];
     var trueRSum = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       plusDMSum.push(null);
       minusDMSum.push(null);
       trueRSum.push(null);
     }
-    plusDMSum.push(plusDM.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    plusDMSum.push(plusDM.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    minusDMSum.push(minusDM.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    minusDMSum.push(minusDM.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    trueRSum.push(trueR.slice(0, timeperiod).reduce(function (pre, cur, index, arr) {
+    trueRSum.push(trueR.slice(0, periods).reduce(function (pre, cur, index, arr) {
       return pre + cur;
     }));
-    for (var i = timeperiod - 1; i < high.length; i++) {
-      plusDMSum.push(plusDMSum[i - 1] - plusDMSum[i - 1] / timeperiod + plusDM[i]);
-      minusDMSum.push(minusDMSum[i - 1] - minusDMSum[i - 1] / timeperiod + minusDM[i]);
-      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / timeperiod + trueR[i]);
+    for (var i = periods - 1; i < high.length; i++) {
+      plusDMSum.push(plusDMSum[i - 1] - plusDMSum[i - 1] / periods + plusDM[i]);
+      minusDMSum.push(minusDMSum[i - 1] - minusDMSum[i - 1] / periods + minusDM[i]);
+      trueRSum.push(trueRSum[i - 1] - trueRSum[i - 1] / periods + trueR[i]);
     }
     var minusDI = [];
     var plusDI = [];
@@ -435,46 +435,46 @@ function INDICATORS(ohlcv) {
         dx.push(null);
       }
     }
-    var adx = SMA(dx, timeperiod);
+    var adx = SMA(dx, periods);
     var adxr = [];
-    for (var i = 0; i < timeperiod; i++) {
+    for (var i = 0; i < periods; i++) {
       adxr.push(null);
     }
-    for (var i = timeperiod; i < adx.length; i++) {
-      adxr.push((adx[i] - adx[i - timeperiod]) / 2);
+    for (var i = periods; i < adx.length; i++) {
+      adxr.push((adx[i] - adx[i - periods]) / 2);
     }
     return [minusDI, plusDI, adx, adxr];
   };
   
   this.DMI = function(settings) {
-    return DMI(this.high, this.low, this.close, settings.timeperiod);
+    return DMI(this.high, this.low, this.close, settings.periods);
   };
   
-  function SMA(close, timeperiod) {
-    if (!timeperiod) { timeperiod = 30; }
+  function SMA(close, periods) {
+    if (!periods) { periods = 30; }
     var result = [];
     var queue = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       queue.push(close[i]);
       result.push(null);
     }
-    for (var i = timeperiod - 1; i < close.length; i++) {
+    for (var i = periods - 1; i < close.length; i++) {
       queue.push(close[i]);
       result.push(queue.reduce(function (pre, cur, index, arr) {
         return pre + cur;
-      }) / timeperiod);
+      }) / periods);
       queue.shift();
     }
     return result;
   };
   
   this.SMA = function(settings) {
-    return SMA(this.close, settings.timeperiod) 
+    return SMA(this.close, settings.periods) 
   };
   
-  function EMA(close, timeperiod) {
-    if (!timeperiod) { timeperiod = 30; }
-    var k = 2 / (timeperiod + 1);
+  function EMA(close, periods) {
+    if (!periods) { periods = 30; }
+    var k = 2 / (periods + 1);
     var result = [close[0]];
     for (var i = 1; i < close.length; i++) {
       result.push(k * close[i] + (1 - k) * result[i - 1]);
@@ -483,7 +483,7 @@ function INDICATORS(ohlcv) {
   };
   
   this.EMA = function(settings) {
-    return EMA(this.close, settings.timeperiod);
+    return EMA(this.close, settings.periods);
   };
   
   function MACD(close, fastperiod, slowperiod, signalperiod) {
@@ -606,14 +606,14 @@ function INDICATORS(ohlcv) {
     return TRIX(this.close, settings.periods);
   };
   
-  function lowest(arr, timeperiod) {
+  function lowest(arr, periods) {
     var result = [];
     var queue = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       queue.push(arr[i]);
       result.push(Math.min.apply(null, queue));
     }
-    for (var i = timeperiod - 1; i < arr.length; i++) {
+    for (var i = periods - 1; i < arr.length; i++) {
       queue.push(arr[i]);
       result.push(Math.min.apply(null, queue));
       queue.shift();
@@ -621,18 +621,18 @@ function INDICATORS(ohlcv) {
     return result;
   };
   
-  this.lowest = function(arr, timeperiod){
-    return lowest(arr, timeperiod);
+  this.lowest = function(arr, periods){
+    return lowest(arr, periods);
   };
   
-  function highest(arr, timeperiod) {
+  function highest(arr, periods) {
     var result = [];
     var queue = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       queue.push(arr[i]);
       result.push(Math.max.apply(null, queue));
     }
-    for (var i = timeperiod - 1; i < arr.length; i++) {
+    for (var i = periods - 1; i < arr.length; i++) {
       queue.push(arr[i]);
       result.push(Math.max.apply(null, queue));
       queue.shift();
@@ -640,18 +640,18 @@ function INDICATORS(ohlcv) {
     return result;
   };
   
-  this.highest = function(arr, timeperiod){
-    return highest(arr, timeperiod);
+  this.highest = function(arr, periods){
+    return highest(arr, periods);
   };
   
-  function standardDeviation(arr, timeperiod) {
+  function standardDeviation(arr, periods) {
     var result = [];
     var queue = [];
-    for (var i = 0; i < timeperiod - 1; i++) {
+    for (var i = 0; i < periods - 1; i++) {
       queue.push(arr[i]);
       result.push(null);
     }
-    for (var i = timeperiod - 1; i < arr.length; i++) {
+    for (var i = periods - 1; i < arr.length; i++) {
       queue.push(arr[i]);
       var ave = queue.reduce(function (pre, cur, index, arr) {
         return pre + cur;
@@ -667,7 +667,7 @@ function INDICATORS(ohlcv) {
     return result;
   }
   
-  this.standardDeviation = function(arr, timeperiod){
-    return standardDeviation(arr, timeperiod);
+  this.standardDeviation = function(arr, periods){
+    return standardDeviation(arr, periods);
   };
 }

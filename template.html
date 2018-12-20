@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <base target="_top"> 
+    <base target="_self" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css"> -->
@@ -19,13 +19,13 @@
         console.log(userObj);
       }
     </script>
+    <?var url = getScriptUrl();?>
   </head>
   <body>
-  <?var url = getScriptUrl();?>
-  <nav class="navbar">
+  <nav class="navbar is-light">
     <div class="container">
       <div class="navbar-brand">
-        <a class="navbar-item brand-text" href="<?=url?>">trader.script.tools</a>
+        <a class="navbar-item brand-text">trader.script.tools</a>
           <div class="navbar-burger burger" data-target="navMenu">
             <span></span>
             <span></span>
@@ -43,13 +43,14 @@
         </div>
       </div>
     </nav>
-    <div class="container">
-      <div class="columns">
-        <div class="column is-12">
-          <?!= HtmlService.createHtmlOutputFromFile(page).getContent(); ?>
-        </div>
-      </div>
-    </div>
+    <section class="container is-large">
+      <?!= HtmlService.createHtmlOutputFromFile(page).getContent(); ?>
+    </section>
+    <footer class="footer">
+      <div class="container">
+	    <div class="content has-text-centered">Coinfused</div>
+	  </div>
+    </footer>
     <?!= HtmlService.createHtmlOutputFromFile(page + '.js').getContent(); ?>
   </body>
 </html>

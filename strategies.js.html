@@ -2,6 +2,76 @@
 <script>
 
 // FORM LIBRARY
+
+  function appendElement(target_name, element) {
+    var target = document.getElementById(target_name)
+    target.appendChild(element);   
+  }
+
+    function makeSelect(name, choices_array, size, action) {
+    
+      var div = document.createElement('div');
+      div.setAttribute('class', 'select');
+    
+      var select = document.createElement('select');
+      select.setAttribute('size', size);
+      
+      var option = document.createElement('option');
+      option.innerText = name;
+      option.selected = true;
+      option.disabled = true;
+      select.appendChild(option);
+    
+      choices_array.forEach(function(el) {
+          
+        var option = document.createElement('option');
+        option.setAttribute('value', el);
+        option.innerText = el;
+        if (action) option.setAttribute('onchange', action);
+        this.select.appendChild(option);
+
+      }, {select: select, size: size});
+      
+      div.appendChild(select)
+      
+      var field = document.createElement('div');
+      field.setAttribute('class', 'field');
+      field.appendChild(div);
+      return field;
+    }
+    
+   function getSelect(el) {
+
+    var arr = Array.prototype.slice.call(el,0);
+
+    return arr.filter(function(choice) {
+    
+      return  choice.selected;
+    }).map(function(choice) {
+    
+      return choice;
+    });
+  };
+  
+  
+  function makeButtonsList(arr, action) {
+  
+    var buttons = document.createElement('div');
+    buttons.setAttribute('class','buttons has-addons');
+    
+    arr.forEach(function(el) {
+    
+      var button = document.createElement('span');
+      button.setAttribute('class','button');
+      button.setAttribute('value',el);
+      button.innerText = el;
+      if (this.action) button.setAttribute('onclick',this.action);
+      buttons.appendChild(button)
+    }, {action: action})
+  
+    return buttons;
+  }
+  
   
   // type = 'radio' or 'checkbox'
   function makeChoice(type, parent_name, label_name, choices_array, action){
@@ -12,7 +82,6 @@
     var label = document.createElement('div');
     label.setAttribute('class','label');
     label.innerText = label_name;
-    
     var control = document.createElement('div');
     control.setAttribute('class','control');
     if (action) control.setAttribute('onchange', action);
@@ -93,9 +162,11 @@
     parent.appendChild(label);
   }
 
-  function makeDropdown(parent_name, choices_array, action){
-
-    var parent = document.getElementById(parent_name);
+  // modificare per uso con html (icone ecc)
+  function makeDropdown(choices_array, action){
+    
+    var field = document.createElement('div');
+    field.setAttribute('class', 'field');
     
     var dropdown_content = document.createElement('div');
     dropdown_content.setAttribute('class', 'dropdown-content')
@@ -103,14 +174,14 @@
     choices_array.forEach(function(el) {
           
       var a = document.createElement('a');
-      if (action) a.setAttribute('onclick', action);
+      if (this.action) a.setAttribute('onclick', this.action);
       a.setAttribute('value', el);
       a.setAttribute('class','dropdown-item');
       a.innerText = el;
       
       this.content.appendChild(a);
 
-    }, {content: dropdown_content});
+    }, {content: dropdown_content, action: action});
                 
     var dropdown = document.createElement('div');
     dropdown.setAttribute('class', 'dropdown');
@@ -145,25 +216,131 @@
     dropdown_menu.appendChild(dropdown_content);
     dropdown.appendChild(dropdown_trigger);
     dropdown.appendChild(dropdown_menu);
-    parent.appendChild(dropdown);
+    field.appendChild(dropdown)
+    return field;
   };
+
+
+  
+  function makeIndicatorForm(indicator_name, obj, action) {
+  
+    var field = document.createElement('div');
+    field.setAttribute('class', 'field is-horizontal');
+    //field.setAttribute('name', parent_name + '_field');
+    field.setAttribute('onchange', action);
+    
+    var field_label = document.createElement('div');
+    field_label.setAttribute('class', 'field-label is-normal');
+    
+    var label = document.createElement('label');
+    label.setAttribute('class', 'label');  
+    label.innerText = indicator_name;
+    
+    var field_body = document.createElement('div');
+    field_body.setAttribute('class', 'field-body');
+    
+    field_label.appendChild(label);
+    field.appendChild(field_label);
+    
+    Object.keys(obj[indicator_name]).forEach(function(key) {
+    
+       var has_addons = document.createElement('div');
+       has_addons.setAttribute('class', 'field has-addons');
+      
+       var control_pre = document.createElement('p');
+       control_pre.setAttribute('class', 'control');
+       
+       var pre = document.createElement('a');
+       pre.setAttribute('class', 'button is-static');
+       pre.innerText = key;
+      
+       var control_input = document.createElement('p');
+       control_input.setAttribute('class', 'control');
+       
+       var input = document.createElement('input');
+       input.setAttribute('class', 'input');
+       input.setAttribute('type', 'text');
+       input.setAttribute('placeholder', this.obj[this.indicator_name][key]);
+      
+       control_pre.appendChild(pre);
+       control_input.appendChild(input);
+       
+       has_addons.appendChild(control_pre);
+       has_addons.appendChild(control_input);
+       this.field_body.appendChild(has_addons);
+       
+    }, {
+         field_body: field_body,
+         indicator_name: indicator_name,
+         obj: obj
+       }
+    );
+    
+    var timeframes = document.createElement('div');
+    // timeframes.setAttribute('id', 'timeframesForms');
+    var timeframes_select = makeSelect('Timeframe', document.timeframesDefault, '1')
+    
+    field_body.appendChild(timeframes_select);
+    field.appendChild(field_body);
+    return field;
+  }
+  
+  function makeConditionForm() {
+  
+    var left = makeSelect('Indicator', document.indicators, '1');
+    var operators_array = ['> (over)', '< (under)', '= (equal)' ];
+    var operator = makeSelect('Operator', operators_array, '1');
+    var right_array = document.indicators.concat(['Fix Value']);
+    var right = makeSelect('Indicator', right_array, '1');
+    
+    var moltiplicator = document.createElement('input');
+    moltiplicator.setAttribute('class', 'input');
+    moltiplicator.setAttribute('type', 'text');
+    moltiplicator.setAttribute('placeholder', 1);
+    
+    var cond_name = document.createElement('input');
+    cond_name.setAttribute('class', 'input');
+    cond_name.setAttribute('type', 'text');
+    cond_name.setAttribute('placeholder', 'condition name');
+    
+    var fields = [left, operator, right, moltiplicator, cond_name];
+    
+    var field = document.createElement('div');
+    field.setAttribute('class', 'field is-horizontal');
+    field.setAttribute('name', 'conditionSettingField');
+    // field.setAttribute('onchange', action);
+    
+    var field_body = document.createElement('div');
+    field_body.setAttribute('class', 'field-body');
+
+    
+    fields.forEach(function(f) {
+    
+       var field = document.createElement('div');
+       field.setAttribute('class', 'field');
+
+       field.appendChild(f);
+       this.field_body.appendChild(field);
+       
+    }, {field_body: field_body, indicatorsDefault: document.indicatorsDefault})
+    
+    field.appendChild(field_body);
+    return field;
+  
+  }
 
 // END FORM LIBRARY
 
-  document.mainTimeframe = '';
-  document.additionalTimeframes = [];
-  document.allTimeframes = [];
-  document.indicators = {};
-  
-  var tfs = ['15m','30m','1h','2h','4h','1d','7d']
-  
-  var indicatorsDefault = {
-    BOLL: {timeperiod: 20,sdn: 2},
-    CCI: {timeperiod: 26},
-    DMA: {timeperiodShort: 10,timeperiodLong: 50},
-    DMI: {timeperiod: 14},
-    SMA: {timeperiod: 30},
-    EMA: {timeperiod: 30},
+  document.timeframes = [];
+  document.timeframesDefault = ['15m','30m','1h','2h','4h','1d','7d'];
+  document.indicators = [];
+  document.indicatorsDefault = {
+    BOLL: {periods: 20,sdn: 2},
+    CCI: {periods: 26},
+    DMA: {fastperiod: 10,slowperiod: 50},
+    DMI: {periods: 14},
+    SMA: {periods: 30},
+    EMA: {periods: 30},
     MACD: {fastperiod: 12,slowperiod: 26,signalperiod: 9},
     MTM: {periods: 9},
     OBV : {},
@@ -171,121 +348,49 @@
     RSI: {periods: 14},
     TRIX: {periods: 12}
   }
+  document.indicatorsKeys = Object.keys(document.indicatorsDefault);
+  
+  var tfs = ['15m','30m','1h','2h','4h','1d','7d']
+  
+
   
   window.onload = function() {
-  
-    // Fill mainTimeframe, additionalTimeframes, indicatorNew
-    makeChoice('radio', 'mainTimeframe', 'Main Timeframe', tfs, 'mainTimeframeActions()');
-    makeChoice('checkbox', 'additionalTimeframes', 'Additional Timeframes', tfs, 'additionalTimeframesActions()');
-    makeLabel('indicatorNew', 'Add Indicator');
-    makeDropdown('indicatorNew', Object.keys(indicatorsDefault), 'addIndicatorActions(this.getAttribute("value"))');
-    
-    // onclick dropdowns
-    const button = document.querySelector('.button');
-    const dropdown = document.querySelector('.dropdown');
-    button.addEventListener('click', function() {
-      dropdown.classList.toggle('is-active');
-    });
-  }
-    
-  function mainTimeframeActions() {
-    var mainTimeframe = getChoiceInput('mainTimeframe');
-    document.mainTimeframe = mainTimeframe;
-    document.allTimeframes = document.additionalTimeframes.concat(mainTimeframe);
-    disableChoice(mainTimeframe[0], 'additionalTimeframes');
-    unselectChoice(mainTimeframe[0], 'additionalTimeframes')
-  }
+    appendButtonsList();
 
-  function additionalTimeframesActions() {
-    var additionalTimeframes = getChoiceInput('additionalTimeframes');
-    document.additionalTimeframes = additionalTimeframes;
-    document.allTimeframes = document.mainTimeframe.concat(additionalTimeframes);
+  };
+  
+  function appendButtonsList() {
+    var indicators_buttons_list = makeButtonsList(document.indicatorsKeys, 'appendIndicatorForm(this.getAttribute("value"))');
+    appendElement('defaultIndicators', indicators_buttons_list);  
+  };
+  
+  function appendIndicatorForm(input) {
+    var indicator_form = makeIndicatorForm(input, document.indicatorsDefault, 'indicatorActions(this.parentNode)');
+    appendElement('indicators', indicator_form);
+  };
+  
+  function appendConditionForm() {
+    var condition_form = makeConditionForm();
+    appendElement('conditions', condition_form);
   }
   
-  function addIndicatorActions(input) {
-    console.log(input)
-  }
+  function indicatorActions(input) {
   
-  function loadIndicatorsAddHtml() {
-    var select = makeDropdown("indicators", "Select", Object.keys(indicatorsDefault))
-    var parent = document.getElementById('indicatorsAddForm')
-    parent.innerText = "Add Indicator: "
-    parent.appendChild(select);
-    var save = document.createElement('a');
-    save.setAttribute('class', 'button is-small');
-    save.setAttribute('type','submit');
-    save.setAttribute('onclick','loadConditionsHtml()');
-    save.innerText = 'Save';
-    parent.appendChild(save);
-  }
-  
-  
-  
-  
-
-  
-  function addIndicatorToList() {
-  
-    function createInputText(indi) {
-    Object.keys(indicatorsDefault[indi]).map(function(key) {
-      var div = document.createElement('div');
-      div.setAttribute('class', 'field has-addons');
-      var p1 = document.createElement('p');
-       p1.setAttribute('class', 'control');
-       var a = document.createElement('a');
-       a.setAttribute('class', 'button is-static');
-       a.innerText = key
-       p1.appendChild(a)
-       div.appendChild(p1)
-       var p2 = document.createElement('p');
-       p2.setAttribute('class', 'control');
-       var input = document.createElement('input');
-       input.setAttribute('class', 'input');
-       input.setAttribute('type', 'text');
-       input.setAttribute('placeholder', indicatorsDefault[indi][key]);
-       div.appendChild(input);
+    var settings = Array.prototype.slice.call(input.childNodes).map(function(node) {
+    
+      var indicator = Array.prototype.slice.call(node.querySelectorAll('label'),0).map(function(a) { return a.outerText})
+      var keys = Array.prototype.slice.call(node.querySelectorAll('a'),0).map(function(a) { return a.outerText})
+      var values = Array.prototype.slice.call(node.querySelectorAll('input'),0).map(function(a) { return a.value || a.placeholder })
+      var timeframe = getSelect(node.querySelectorAll("option"))[0].value
+      return {indicator: indicator, keys: keys, values: values, timeframe: timeframe};
     })
-    };
     
-    function createLabel(text) {
-      var label = document.createElement('element');
-      label.setAttribute('class','label is-normal');
-      label.innerText = text;
-      return label;
-    };
+    function onlyUnique(value, index, self) {
+      return (self.indexOf(value) === index && value !== 'Timeframe');
+    }
     
-    function createField(set) {
-      var field = document.createElement('div');
-      field.setAttribute('class','field is-horizontal');
-      field.appendChild(createLabel(set.label));
-      field.appendChild(createInputText(set.placeholder));
-      return field;
-    };
-  
-    var indiName = document.getElementById('indicatorsDropdown').value;
-    var field = createField({type:'input',label: indiName,placeholder: placeholder})  
-
-    var form = document.createElement('form');
-    form.innerText = indicatorSlug;
-    var dropdownTfs = makeDropdown("indicatorTimeframe", "Select timeframe", document.allTfs)
-
-
-
-
-
-
-
-
-    var remove = document.createElement('span');
-    remove.setAttribute('class', 'button is-small');
-    remove.setAttribute('type', 'Submit');
-    remove.setAttribute('onclick', 'removeIndicator(this)');
-    remove.innerText = "Remove";
-    form.appendChild(remove);
-    document.getElementById('indicatorsListDiv').appendChild(form);
-  }
-
-  function removeIndicator(input) {
-    document.getElementById('indicatorsListDiv').removeChild(input.parentNode);
+    document.timeframes = settings.map(function(s) {return s.timeframe}).filter( onlyUnique );
+    document.indicators = settings.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe});
+    console.log(document.indicators)
   }
 </script>
