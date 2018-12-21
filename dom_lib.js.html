@@ -1,0 +1,186 @@
+<script>
+
+var ifClasses = function(el, classes) {
+  if (classes) classes.forEach(function(cl) {
+    this.el.classList.add(cl);
+  }, {el: el})
+};
+
+var ifAttributes = function(el, attributes) {
+  if (attributes) {
+    Object.keys(attributes).forEach(function(key) {
+      this.el.setAttribute(key, this.attributes[key]);
+    }, {el: el, attributes: attributes})
+  }
+};
+
+dom_lib = {}
+
+dom_lib.appendElement = function(target_name, element) {
+  var target = document.getElementById(target_name)
+  target.appendChild(element);   
+};
+
+
+dom_lib.label = {
+
+  make: function(label_name) {
+
+    var field_label = document.createElement('div');
+    field_label.classList.add('field-label');
+    field_label.classList.add('is-normal');
+    
+    var label = document.createElement('label');
+    label.classList.add('label');
+    label.innerText = label_name;
+    
+    field_label.appendChild(label);
+    return field_label;
+  }
+}
+
+dom_lib.icon = {
+
+  // is-small default class.
+  make: function(icon_name, classes) {
+    
+    var icon = document.createElement('span');
+    icon.classList.add('icon');
+    icon.classList.add('is-small');
+    if (classes) classes.forEach(function(cl) {
+      icon.classList.add(cl);  
+    });
+      
+    var i = document.createElement('i');
+    i.setAttribute('class', icon_name);
+    i.setAttribute('aria-hidden', "true");
+      
+    icon.appendChild(i);
+    return icon;    
+  }
+}
+
+
+dom_lib.button = {
+
+  make: function(button_text, icon_name, attributes, classes) {
+  
+    var field = document.createElement('div');
+    field.classList.add('field');
+    if (icon_name) field.classList.add('has-addons');
+
+    var button = document.createElement('button');
+    button.classList.add('button');
+    ifAttributes(button, attributes)
+    ifClasses(button, classes);
+
+    if (button_text) {
+      var text = document.createElement('span');
+      text.innerText = button_text;
+    }
+    
+    if (icon_name) button.appendChild(dom_lib.icon.make(icon_name));
+    if (button_text) button.appendChild(text);
+    field.appendChild(button);
+    return field;
+  }
+}
+
+dom_lib.buttonsList = {
+
+  make: function(list_names, list_icons, list_attributes, list_classes, button_attributes, button_classes) {
+  
+    var buttons = document.createElement('div');
+    buttons.classList.add('buttons');
+    buttons.classList.add('has-addons');
+    ifAttributes(buttons, list_attributes)
+    ifClasses(buttons, list_classes);
+    
+    list_names.forEach(function(el, i) {
+      this.attributes.value = el;
+      var button = dom_lib.button.make(el, this.icons[i], this.attributes, this.classes)
+      buttons.appendChild(button.firstChild);
+    }, {icons: list_icons, attributes: button_attributes || {}, classes: button_classes || []});
+
+    return buttons;
+  },
+};
+
+dom_lib.option = {
+
+  make: function(text, attributes, classes) {
+  
+    var option = document.createElement('option');
+    option.innerText = text;
+    ifAttributes(option, attributes);
+    ifClasses(option, classes);
+    return option;
+  }
+}
+
+dom_lib.select = {
+
+  make: function(text, options, select_attr, select_cla, option_att, option_cla) {
+    
+    var div = document.createElement('div');
+    div.classList.add('select');
+    if (select_attr.size > 1) div.classList.add('is-multiple');
+      
+    var select = document.createElement('select');
+    if (select_attr.size > 1) select_attr.multiple = true;
+    ifAttributes(select, select_attr);
+    ifClasses(select, select_cla);
+
+    var option = dom_lib.option.make(text, {value: null, selected: true, disabled: true});
+    select.appendChild(option);
+    
+    options.forEach(function(el) {
+      var option = dom_lib.option.make(el, {value: el});  
+      this.select.appendChild(option);
+    }, {select: select});
+      
+    div.appendChild(select);
+    return div;
+  },
+  
+  getSelected: function(el) {
+    var options = Array.prototype.slice.call(el,0);
+    return options.filter(function(option) {
+      return  option.selected;
+    });  
+  },
+}
+
+
+dom_lib.choices = {
+  
+  make: function(type, label_name, choices, choices_attr, choices_cla, option_att, option_cla) {
+  
+  },
+  
+  getSelected: function(div) {
+
+    var arr = Array.prototype.slice.call(div.childNodes, 0);
+    return arr.filter(function(option) {
+    
+      return  option.checked;
+    }).map(function(option) {
+    
+      return option.value;
+    });
+  },
+  
+  check: function(div, element) {
+  },
+  
+  uncheck: function(div, element) {
+  },
+  
+  toggleCheck: function(div, element) {
+  },
+}
+
+</script>
+
+
+

@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" integrity="sha256-2pUeJf+y0ltRPSbKOeJh09ipQFYxUdct5nTY6GAXswA=" crossorigin="anonymous" />
+    <?!= HtmlService.createHtmlOutputFromFile('style.css').getContent(); ?>
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.min.js"></script>
     <script> _u = _.noConflict();</script>
@@ -21,34 +22,58 @@
     <?var url = getScriptUrl();?>
   </head>
   <body>
-  <nav class="navbar is-light">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item brand-text">trader.script.tools</a>
-          <div class="navbar-burger burger" data-target="navMenu">
-            <span></span>
-            <span></span>
-            <span></span>
+    <section class="hero is-fullheight">
+      <!-- Hero head: will stick at the top -->
+      <div class="hero-head">
+        <header class="navbar">
+          <div class="container">
+            <div class="navbar-brand">
+              <a class="navbar-item has-text-weight-bold">
+                trader.script.tools
+              </a>
+              <span class="navbar-burger burger" data-target="navbarMenuHeroC">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+            <div id="navbarMenuHeroC" class="navbar-menu">
+              <div class="navbar-end">
+                <a class="navbar-item" href="<?=url?>?page=datasets">Datasets</a>
+                <a class="navbar-item" href="<?=url?>?page=strategies">Strategies</a>
+                <a class="navbar-item" href="<?=url?>?page=backtests">Backtests</a>
+                <a class="navbar-item" href="<?=url?>?page=signals">Trading Signals</a>
+                <a class="navbar-item" href="<?=url?>?page=live">Live Trading</a>
+              </div>
+            </div>
           </div>
-        </div>
-        <div id="navMenu" class="navbar-menu">
-          <div class="navbar-end">
-            <a class="navbar-item" href="<?=url?>?page=datasets">Datasets</a>
-            <a class="navbar-item" href="<?=url?>?page=strategies">Strategies</a>
-            <a class="navbar-item" href="<?=url?>?page=backtests">Backtests</a>
-            <a class="navbar-item" href="<?=url?>?page=signals">Trading Signals</a>
-            <a class="navbar-item" href="<?=url?>?page=live">Live Trading</a>
-          </div>
-        </div>
+        </header>
       </div>
-    </nav>
-    <div class="container">
-      <div class="columns">
-        <div class="column is-12">
+
+      <!-- Hero content: will be in the middle -->
+      <div class="hero-body">
+        <div class="container has-text-centered">
           <?!= HtmlService.createHtmlOutputFromFile(page).getContent(); ?>
         </div>
       </div>
-    </div>
+
+      <!-- Hero footer: will stick at the bottom -->
+      <div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+          <div class="container">
+            <ul>
+              <li><a>foobar</a></li>
+              <li><a>foobar</a></li>
+              <li><a>foobar</a></li>
+              <li><a>foobar</a></li>
+              <li><a>foobar</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </section>
     <?!= HtmlService.createHtmlOutputFromFile(page + '.js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('bulma.js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('dom_lib.js').getContent(); ?>
   </body>
 </html>

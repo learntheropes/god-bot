@@ -1,42 +1,59 @@
-<div class="card">
-  <div class="card-content">
-    <div class="content">
-      <div class="columns">
-        <div class="column is-2"><h1 class="title is-4">Indicators</h1></div>  
-        <div id="defaultIndicators" class="column is-8"></div>
-      </div>
-      <div class="columns">
-        <div id="indicators" class="column is-11 is-offset-1"></div>
-      </div>
-    </div>
+<div class="columns">
+  <div id="new" class="column is-2">
+  <div class="field has-addons">
+    <a class="button is-fullwidth" onclick="toggleIndicatorsList()">
+      <span>Indicator</span>
+      <span class="icon is-small">
+        <i id="toggle-up-down-1" class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+    </a>
   </div>
-</div>
-
-
-<div class="columns">
-  <div class="column is-2">
-    <h1 class="title is-4">Conditions</h1>
-  </div>  
-  <div class="column is-10 is-right">
-    <input class="button" type="submit" onclick="appendConditionForm()" value="+">
+  <div class="field">
+    <div id="newIndicator" class="control"></div>
   </div>
-</div>
-<div class="columns">
-  <div id="conditions" class="column is-10 is-offset-2"></div>
-</div>
-
-
-<div class="columns">
-  <div class="column is-2">
-    <h1 class="title is-4">Actions</h1>
-  </div>  
+  <div class="field has-addons">
+    <a class="button is-fullwidth" onclick="appendConditionForm()">
+      <span>Condition</span>
+      <span class="icon is-small">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      </span>
+    </a>
+  </div>
+  <div class="field has-addons">  
+    <a class="button is-fullwidth" onclick="appendGroupForm()">
+      <span>Group</span>
+      <span class="icon is-small">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      </span>
+    </a>
+  </div>
+  <div class="field has-addons">
+    <a class="button is-fullwidth" onclick="appendActionForm()">
+      <span>Action</span>
+      <span class="icon is-small">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      </span>
+    </a>
+  </div>
+  </div>
   <div class="column is-10">
-    <input class="button" type="submit" onclick="appendActionForm()" value="+">
-  </div>
+    <div id="indicators" class="box"><p>Indicators</p></div>
+    <div id="conditions" class="box"><p>Conditions</p></div>
+    <div id="groups" class="box"><p>Groups</p></div>
+    <div id="actions" class="box"><p>Actions</p></div>
+  </div>  
 </div>
-<div class="columns">
-  <div id="actions" class="column is-12"></div>
-</div>
+     
+      
 
+
+  
+
+
+    
+   
+
+
+ 
 
 

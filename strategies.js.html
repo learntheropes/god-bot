@@ -1,186 +1,40 @@
 <script>
-// FORM LIBRARY
-  function appendElement(target_name, element) {
-    var target = document.getElementById(target_name)
-    target.appendChild(element);   
-  }
-    function makeSelect(name, choices_array, size, action) {
-    
-      var div = document.createElement('div');
-      div.setAttribute('class', 'select');
-    
-      var select = document.createElement('select');
-      select.setAttribute('size', size);
-      
-      var option = document.createElement('option');
-      option.innerText = name;
-      option.selected = true;
-      option.disabled = true;
-      select.appendChild(option);
-    
-      choices_array.forEach(function(el) {
           
-        var option = document.createElement('option');
-        option.setAttribute('value', el);
-        option.innerText = el;
-        if (action) option.setAttribute('onchange', action);
-        this.select.appendChild(option);
-      }, {select: select, size: size});
-      
-      div.appendChild(select)
-      
-      var field = document.createElement('div');
-      field.setAttribute('class', 'field');
-      field.appendChild(div);
-      return field;
-    }
-    
-   function getSelect(el) {
-    var arr = Array.prototype.slice.call(el,0);
-    return arr.filter(function(choice) {
-    
-      return  choice.selected;
-    }).map(function(choice) {
-    
-      return choice;
-    });
-  };
-  
-  
-  function makeButtonsList(arr, action) {
-  
-    var buttons = document.createElement('div');
-    buttons.setAttribute('class','buttons has-addons');
-    
-    arr.forEach(function(el) {
-    
-      var button = document.createElement('span');
-      button.setAttribute('class','button');
-      button.setAttribute('value',el);
-      button.innerText = el;
-      if (this.action) button.setAttribute('onclick',this.action);
-      buttons.appendChild(button)
-    }, {action: action})
-  
-    return buttons;
-  }
-  
-  
-  // type = 'radio' or 'checkbox'
-  function makeChoice(type, parent_name, label_name, choices_array, action){
-    
-    var parent = document.getElementById(parent_name);
-    parent.innerHTML = '';
-    
-    var label = document.createElement('div');
-    label.setAttribute('class','label');
-    label.innerText = label_name;
-    var control = document.createElement('div');
-    control.setAttribute('class','control');
-    if (action) control.setAttribute('onchange', action);
-    
-    choices_array.forEach(function(el) {
-    
-      var p = document.createElement('p');
-      
-      var label = document.createElement('label');
-      label.setAttribute('class',type);
-      
-      var input = document.createElement('input');
-      input.setAttribute('type', type);
-      input.setAttribute('name', parent_name + 'Inputs');
-      input.setAttribute('value', el);
-      
-      label.appendChild(input);
-      
-      var span = document.createElement('span');
-      span.innerText = el;
-      label.appendChild(span);
-      
-      p.appendChild(label);
-      this.control.appendChild(p);
-    }, {control: control});
-    
-    parent.appendChild(label);
-    parent.appendChild(control);
-  };
-  
-  
-  
-  function getChoiceInput(div_name) {
-  
-    var div = document.getElementsByName(div_name + 'Inputs');
-    var arr = Array.prototype.slice.call(div,0);
-    return arr.filter(function(choice) {
-    
-      return  choice.checked;
-    }).map(function(choice) {
-    
-      return choice.value;
-    });
-  };
-  function disableChoice(choice, div_name) {
-    var divs = document.getElementsByName(div_name + 'Inputs');
-    divs.forEach(function(input) {
-      if ( input.value === choice) {
-        input.disabled = true;
-      }
-      else {
-        input.disabled = false;
-      }
-    });
-  }
-  
-  
-  
-  function unselectChoice(choice, div_name) {
-    var divs = document.getElementsByName(div_name + 'Inputs');
-    divs.forEach(function(input) {
-      if ( input.value === choice) {
-        input.checked = false;
-      }
-    });    
-  }
-  function makeLabel(parent_name, label_name) {
-    var parent = document.getElementById(parent_name);
-    var label = document.createElement('div');
-    label.setAttribute('class','label');
-    label.innerText = label_name;
-    parent.appendChild(label);
-  }
   // modificare per uso con html (icone ecc)
   function makeDropdown(choices_array, action){
     
     var field = document.createElement('div');
-    field.setAttribute('class', 'field');
+    field.classList.add('field');
     
     var dropdown_content = document.createElement('div');
-    dropdown_content.setAttribute('class', 'dropdown-content')
+    dropdown_content.classList.add('dropdown-content')
     
     choices_array.forEach(function(el) {
           
       var a = document.createElement('a');
       if (this.action) a.setAttribute('onclick', this.action);
       a.setAttribute('value', el);
-      a.setAttribute('class','dropdown-item');
+      a.classList.add('dropdown-item');
       a.innerText = el;
       
       this.content.appendChild(a);
     }, {content: dropdown_content, action: action});
                 
     var dropdown = document.createElement('div');
-    dropdown.setAttribute('class', 'dropdown');
+    dropdown.classList.add('dropdown');
+    dropdown.classList.add('is-up');
     
     var dropdown_trigger = document.createElement('div');
-    dropdown_trigger.setAttribute('class', 'dropdown-trigger');
+    dropdown_trigger.classList.add('dropdown-trigger');
     
     var button = document.createElement('button');
-    button.setAttribute('class','button');
+    button.classList.add('button');
+    button.setAttribute('id','foobar');
     button.setAttribute('aria-haspopup','true');
     button.setAttribute('aria-controls','dropdown-menu');
     
     var dropdown_menu = document.createElement('div');
-    dropdown_menu.setAttribute('class','dropdown-menu');
+    dropdown_menu.classList.add('dropdown-menu');
     dropdown_menu.setAttribute('id','dropdown-menu');
     dropdown_menu.setAttribute('role', 'menu');
     
@@ -188,11 +42,13 @@
     txt.innerText = 'Indicators';
         
     var i = document.createElement('i');
-    i.setAttribute('class', 'fas fa-angle-down');
+    i.classList.add('fas');
+    i.classList.add('fa-angle-up');
     i.setAttribute('aria-hidden', 'true');
     
     var icon = document.createElement('span');
-    icon.setAttribute('class', 'icon is-small');
+    icon.classList.add('icon');
+    icon.classList.add('is-small');
     
     icon.appendChild(i);
     button.appendChild(txt);
@@ -205,112 +61,8 @@
     return field;
   };
   
-  function makeIndicatorForm(indicator_name, obj, action) {
-  
-    var field = document.createElement('div');
-    field.setAttribute('class', 'field is-horizontal');
-    //field.setAttribute('name', parent_name + '_field');
-    field.setAttribute('onchange', action);
-    
-    var field_label = document.createElement('div');
-    field_label.setAttribute('class', 'field-label is-normal');
-    
-    var label = document.createElement('label');
-    label.setAttribute('class', 'label');  
-    label.innerText = indicator_name;
-    
-    var field_body = document.createElement('div');
-    field_body.setAttribute('class', 'field-body');
-    
-    field_label.appendChild(label);
-    field.appendChild(field_label);
-    
-    Object.keys(obj[indicator_name]).forEach(function(key) {
-    
-       var has_addons = document.createElement('div');
-       has_addons.setAttribute('class', 'field has-addons');
-      
-       var control_pre = document.createElement('p');
-       control_pre.setAttribute('class', 'control');
-       
-       var pre = document.createElement('a');
-       pre.setAttribute('class', 'button is-static');
-       pre.innerText = key;
-      
-       var control_input = document.createElement('p');
-       control_input.setAttribute('class', 'control');
-       
-       var input = document.createElement('input');
-       input.setAttribute('class', 'input');
-       input.setAttribute('type', 'text');
-       input.setAttribute('placeholder', this.obj[this.indicator_name][key]);
-      
-       control_pre.appendChild(pre);
-       control_input.appendChild(input);
-       
-       has_addons.appendChild(control_pre);
-       has_addons.appendChild(control_input);
-       this.field_body.appendChild(has_addons);
-       
-    }, {
-         field_body: field_body,
-         indicator_name: indicator_name,
-         obj: obj
-       }
-    );
-    
-    var timeframes = document.createElement('div');
-    // timeframes.setAttribute('id', 'timeframesForms');
-    var timeframes_select = makeSelect('Timeframe', app.default.timeframes, '1')
-    
-    field_body.appendChild(timeframes_select);
-    field.appendChild(field_body);
-    return field;
-  }
-  
-  function makeConditionForm() {
-  
-    var left = makeSelect('Indicator', app.user.indicators, '1');
-    var operators_array = ['> (over)', '< (under)', '= (equal)' ];
-    var operator = makeSelect('Operator', operators_array, '1');
-    var right_array = app.user.indicators.concat(['Fix Value']);
-    var right = makeSelect('Indicator', right_array, '1');
-    
-    var moltiplicator = document.createElement('input');
-    moltiplicator.setAttribute('class', 'input');
-    moltiplicator.setAttribute('type', 'text');
-    moltiplicator.setAttribute('placeholder', 1);
-    
-    var cond_name = document.createElement('input');
-    cond_name.setAttribute('class', 'input');
-    cond_name.setAttribute('type', 'text');
-    cond_name.setAttribute('placeholder', 'condition name');
-    
-    var fields = [left, operator, right, moltiplicator, cond_name];
-    
-    var field = document.createElement('div');
-    field.setAttribute('class', 'field is-horizontal');
-    field.setAttribute('name', 'conditionSettingField');
-    // field.setAttribute('onchange', action);
-    
-    var field_body = document.createElement('div');
-    field_body.setAttribute('class', 'field-body');
-    
-    fields.forEach(function(f) {
-    
-       var field = document.createElement('div');
-       field.setAttribute('class', 'field');
-       field.appendChild(f);
-       this.field_body.appendChild(field);
-       
-    }, {field_body: field_body, indicatorsDefault: app.default.indicators})
-    
-    field.appendChild(field_body);
-    return field;
-  
-  }
 // END FORM LIBRARY
-
+  
   app = {};
   
   app.user = {
@@ -337,43 +89,179 @@
       TRIX: {periods: 12}
     }
   }
-      
+
+   /* 
   window.onload = function() {
-    appendButtonsList();
+    const button = document.querySelector('.button');
+    const dropdown = document.querySelector('.dropdown');
+    button.onclick = function(){
+      dropdown.classList.toggle('is-active');
+    };
+   
   };
-  
-  function appendButtonsList() {
-    var indicators_buttons_list = makeButtonsList(Object.keys(app.default.indicators), 'appendIndicatorForm(this.getAttribute("value"))');
-    appendElement('defaultIndicators', indicators_buttons_list);  
+ */
+ 
+ 
+ 
+  function toggleIndicatorsList() {
+    var target = document.getElementById('newIndicator');
+    var icon = document.getElementById('toggle-up-down-1');
+    if (target.hasChildNodes()) {
+      while (target.firstChild) {
+        target.removeChild(target.firstChild);
+      }
+      icon.classList.add('fas');
+      icon.classList.add('fa-angle-down');
+    } else {
+      var keys = Object.keys(app.default.indicators);
+      var el = dom_lib.buttonsList.make(keys, [], null, null, {onclick: 'appendIndicatorForm(this.getAttribute("value"))', type: 'submit'}, ['is-fullwidth'])
+      target.appendChild(el);
+      icon.classList.add('fas');
+      icon.classList.add('fa-angle-up');
+    }
   };
+    
+  function makeIndicatorForm(indicator_name, obj, action) {
   
-  function appendIndicatorForm(input) {
-    var indicator_form = makeIndicatorForm(input, app.default.indicators, 'indicatorActions(this.parentNode)');
-    appendElement('indicators', indicator_form);
-  };
-  
-  function appendConditionForm() {
-    var condition_form = makeConditionForm();
-    appendElement('conditions', condition_form);
+    var field = document.createElement('div');
+    field.setAttribute('name', 'IndicatorForm')
+    field.classList.add('field');
+    field.classList.add('is-horizontal');
+    if (action) field.setAttribute('onchange', action);
+    
+    var field_label = dom_lib.label.make(indicator_name, 1);
+    field.appendChild(field_label);
+    
+    var field_body = document.createElement('div');
+    field_body.classList.add('field-body');
+    
+    var timeframes = dom_lib.select.make('Timeframe', app.default.timeframes, {size: 1})
+    field_body.appendChild(timeframes);
+    
+    Object.keys(obj[indicator_name]).forEach(function(key) {
+    
+       var has_addons = document.createElement('div');
+       has_addons.classList.add('field');
+       has_addons.classList.add('has-addons');
+       
+       var control_pre = document.createElement('p');
+       control_pre.classList.add('control');
+       
+       var pre = document.createElement('a');
+       pre.classList.add('button');
+       pre.classList.add('is-static');
+       pre.innerText = key;
+      
+       var control_input = document.createElement('p');
+       control_input.classList.add('control');
+       
+       var input = document.createElement('input');
+       input.classList.add('input');
+       input.setAttribute('type', 'text');
+       input.setAttribute('placeholder', this.obj[this.indicator_name][key]);
+      
+       control_pre.appendChild(pre);
+       control_input.appendChild(input);
+       
+       has_addons.appendChild(control_pre);
+       has_addons.appendChild(control_input);
+       this.field_body.appendChild(has_addons);
+       
+    }, {
+         field_body: field_body,
+         indicator_name: indicator_name,
+         obj: obj
+       }
+    );
+    // button_text, icon_name, attributes, classes
+    var delete_button = dom_lib.button.make(null, 'far fa-trash-alt', {onclick: 'deleteMe(this)'}, ['is-1']);
+    field_body.appendChild(delete_button);
+ 
+    field.appendChild(field_body);
+    return field;
   }
   
-  function indicatorActions(input) {
+  function appendIndicatorForm(input) {
+    var indicator_form = makeIndicatorForm(input, app.default.indicators, 'indicatorActions()');
+    dom_lib.appendElement('indicators', indicator_form);
+  };
   
-    var settings = Array.prototype.slice.call(input.childNodes).map(function(node) {
-    
+  function indicatorActions() {
+
+    var settings = Array.prototype.slice.call(document.getElementById('indicators').querySelectorAll('div[name="IndicatorForm"]')).map(function(node) {
       var indicator = Array.prototype.slice.call(node.querySelectorAll('label'),0).map(function(a) { return a.outerText})
       var keys = Array.prototype.slice.call(node.querySelectorAll('a'),0).map(function(a) { return a.outerText})
       var values = Array.prototype.slice.call(node.querySelectorAll('input'),0).map(function(a) { return a.value || a.placeholder })
-      var timeframe = getSelect(node.querySelectorAll("option"))[0].value
+      var timeframe = dom_lib.select.getSelected(node.querySelectorAll("option"))[0].value
       return {indicator: indicator, keys: keys, values: values, timeframe: timeframe};
     })
     
     function onlyUnique(value, index, self) {
       return (self.indexOf(value) === index && value !== 'Timeframe');
     }
+
+    app.user.timeframes = app.default.timeframes.filter(function(tf) {
+      return this.unique.indexOf(tf) > -1;
+    }, {unique: settings.map(function(tf) { return tf.timeframe; }).filter(onlyUnique)});
     
-    app.user.timeframes = settings.map(function(s) {return s.timeframe}).filter( onlyUnique );
     app.user.indicators = settings.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe});
-    console.log(app.user.indicators)
+  }
+  
+  function makeConditionForm() {
+    
+    var ohlcv = app.user.timeframes.map(function(tf) {
+      return ['open', 'close', 'high', 'low', 'volume'].map(function(el) {
+        return 'OHLCV(' + el + ').' + tf;
+      });
+    }).flat();
+    var all_indicators = app.user.indicators.concat(ohlcv);
+    var left = dom_lib.select.make('Indicator', all_indicators, {size: 1});
+    var operator = dom_lib.select.make('Operator',['>','>=','=','<=','<'], {size: 1});
+    var right = dom_lib.select.make('Indicator', all_indicators.concat(['Fix Value']), {size: 1});
+    
+    var moltiplicator = document.createElement('input');
+    moltiplicator.classList.add('input');
+    moltiplicator.setAttribute('type', 'text');
+    moltiplicator.setAttribute('placeholder', 1);
+    
+    var cond_name = document.createElement('input');
+    cond_name.classList.add('input');
+    cond_name.setAttribute('type', 'text');
+    cond_name.setAttribute('placeholder', 'Name');
+    
+    var fields = [left, operator, right, moltiplicator, cond_name];
+    
+    var field = document.createElement('div');
+    field.classList.add('field');
+    field.classList.add('is-horizontal');
+    field.setAttribute('name', 'conditionForm');
+    // field.setAttribute('onchange', action);
+    
+    var field_body = document.createElement('div');
+    field_body.classList.add('field-body');
+    
+    fields.forEach(function(f) {
+    
+       var field = document.createElement('div');
+       field.classList.add('field');
+       field.appendChild(f);
+       this.field_body.appendChild(field);
+       
+    }, {field_body: field_body, indicatorsDefault: app.default.indicators})
+    
+    field.appendChild(field_body);
+    return field;
+  
+  }
+  
+  function appendConditionForm() {
+    var condition_form = makeConditionForm();
+    dom_lib.appendElement('conditions', condition_form);
+  }
+  
+
+  
+  function deleteMe(e) {
+    e.parentNode.parentNode.parentNode.removeChild(e.parentNode.parentNode);
   }
 </script>
