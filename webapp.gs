@@ -3,14 +3,17 @@
  */
 function getScriptUrl() {
  var url = ScriptApp.getService().getUrl();
- return url //.replace('/exec', '/dev');
+ return url.replace('/exec', '/dev');
 }
 
 function doGet(e) {
+  if (e.parameter.page === "hero") {
+    return HtmlService.createTemplateFromFile('hero').evaluate().setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL).setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  }
   var p = HtmlService.createTemplateFromFile('template');
   var url = getScriptUrl();
   p.page = e.parameter.page || 'index';
-  return p.evaluate().setSandboxMode(HtmlService.SandboxMode.IFRAME).setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  return p.evaluate().setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL).setSandboxMode(HtmlService.SandboxMode.IFRAME);
 }
 
 // <input type="date" name="from" placeholder="From" onselect="google.script.run.withSuccessHandler(logDate).dateSelect()">

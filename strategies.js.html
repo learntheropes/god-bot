@@ -1,13 +1,9 @@
-
 <script>
-
 // FORM LIBRARY
-
   function appendElement(target_name, element) {
     var target = document.getElementById(target_name)
     target.appendChild(element);   
   }
-
     function makeSelect(name, choices_array, size, action) {
     
       var div = document.createElement('div');
@@ -29,7 +25,6 @@
         option.innerText = el;
         if (action) option.setAttribute('onchange', action);
         this.select.appendChild(option);
-
       }, {select: select, size: size});
       
       div.appendChild(select)
@@ -41,9 +36,7 @@
     }
     
    function getSelect(el) {
-
     var arr = Array.prototype.slice.call(el,0);
-
     return arr.filter(function(choice) {
     
       return  choice.selected;
@@ -106,7 +99,6 @@
       
       p.appendChild(label);
       this.control.appendChild(p);
-
     }, {control: control});
     
     parent.appendChild(label);
@@ -119,7 +111,6 @@
   
     var div = document.getElementsByName(div_name + 'Inputs');
     var arr = Array.prototype.slice.call(div,0);
-
     return arr.filter(function(choice) {
     
       return  choice.checked;
@@ -128,9 +119,6 @@
       return choice.value;
     });
   };
-
-
-
   function disableChoice(choice, div_name) {
     var divs = document.getElementsByName(div_name + 'Inputs');
     divs.forEach(function(input) {
@@ -153,7 +141,6 @@
       }
     });    
   }
-
   function makeLabel(parent_name, label_name) {
     var parent = document.getElementById(parent_name);
     var label = document.createElement('div');
@@ -161,7 +148,6 @@
     label.innerText = label_name;
     parent.appendChild(label);
   }
-
   // modificare per uso con html (icone ecc)
   function makeDropdown(choices_array, action){
     
@@ -180,7 +166,6 @@
       a.innerText = el;
       
       this.content.appendChild(a);
-
     }, {content: dropdown_content, action: action});
                 
     var dropdown = document.createElement('div');
@@ -219,8 +204,6 @@
     field.appendChild(dropdown)
     return field;
   };
-
-
   
   function makeIndicatorForm(indicator_name, obj, action) {
   
@@ -278,7 +261,7 @@
     
     var timeframes = document.createElement('div');
     // timeframes.setAttribute('id', 'timeframesForms');
-    var timeframes_select = makeSelect('Timeframe', document.timeframesDefault, '1')
+    var timeframes_select = makeSelect('Timeframe', app.default.timeframes, '1')
     
     field_body.appendChild(timeframes_select);
     field.appendChild(field_body);
@@ -287,10 +270,10 @@
   
   function makeConditionForm() {
   
-    var left = makeSelect('Indicator', document.indicators, '1');
+    var left = makeSelect('Indicator', app.user.indicators, '1');
     var operators_array = ['> (over)', '< (under)', '= (equal)' ];
     var operator = makeSelect('Operator', operators_array, '1');
-    var right_array = document.indicators.concat(['Fix Value']);
+    var right_array = app.user.indicators.concat(['Fix Value']);
     var right = makeSelect('Indicator', right_array, '1');
     
     var moltiplicator = document.createElement('input');
@@ -312,60 +295,60 @@
     
     var field_body = document.createElement('div');
     field_body.setAttribute('class', 'field-body');
-
     
     fields.forEach(function(f) {
     
        var field = document.createElement('div');
        field.setAttribute('class', 'field');
-
        field.appendChild(f);
        this.field_body.appendChild(field);
        
-    }, {field_body: field_body, indicatorsDefault: document.indicatorsDefault})
+    }, {field_body: field_body, indicatorsDefault: app.default.indicators})
     
     field.appendChild(field_body);
     return field;
   
   }
-
 // END FORM LIBRARY
 
-  document.timeframes = [];
-  document.timeframesDefault = ['15m','30m','1h','2h','4h','1d','7d'];
-  document.indicators = [];
-  document.indicatorsDefault = {
-    BOLL: {periods: 20,sdn: 2},
-    CCI: {periods: 26},
-    DMA: {fastperiod: 10,slowperiod: 50},
-    DMI: {periods: 14},
-    SMA: {periods: 30},
-    EMA: {periods: 30},
-    MACD: {fastperiod: 12,slowperiod: 26,signalperiod: 9},
-    MTM: {periods: 9},
-    OBV : {},
-    ROC: {periods: 12},
-    RSI: {periods: 14},
-    TRIX: {periods: 12}
+  app = {};
+  
+  app.user = {
+    timeframes: [],
+    indicators: [],
+    conditions: [],
+    actions: []
   }
-  document.indicatorsKeys = Object.keys(document.indicatorsDefault);
   
-  var tfs = ['15m','30m','1h','2h','4h','1d','7d']
-  
-
-  
+  app.default = {
+    timeframes: ['15m','30m','1h','2h','4h','1d','7d'],
+    indicators: {
+      BOLL: {periods: 20,sdn: 2},
+      CCI: {periods: 26},
+      DMA: {fastperiod: 10,slowperiod: 50},
+      DMI: {periods: 14},
+      SMA: {periods: 30},
+      EMA: {periods: 30},
+      MACD: {fastperiod: 12,slowperiod: 26,signalperiod: 9},
+      MTM: {periods: 9},
+      OBV : {},
+      ROC: {periods: 12},
+      RSI: {periods: 14},
+      TRIX: {periods: 12}
+    }
+  }
+      
   window.onload = function() {
     appendButtonsList();
-
   };
   
   function appendButtonsList() {
-    var indicators_buttons_list = makeButtonsList(document.indicatorsKeys, 'appendIndicatorForm(this.getAttribute("value"))');
+    var indicators_buttons_list = makeButtonsList(Object.keys(app.default.indicators), 'appendIndicatorForm(this.getAttribute("value"))');
     appendElement('defaultIndicators', indicators_buttons_list);  
   };
   
   function appendIndicatorForm(input) {
-    var indicator_form = makeIndicatorForm(input, document.indicatorsDefault, 'indicatorActions(this.parentNode)');
+    var indicator_form = makeIndicatorForm(input, app.default.indicators, 'indicatorActions(this.parentNode)');
     appendElement('indicators', indicator_form);
   };
   
@@ -389,8 +372,8 @@
       return (self.indexOf(value) === index && value !== 'Timeframe');
     }
     
-    document.timeframes = settings.map(function(s) {return s.timeframe}).filter( onlyUnique );
-    document.indicators = settings.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe});
-    console.log(document.indicators)
+    app.user.timeframes = settings.map(function(s) {return s.timeframe}).filter( onlyUnique );
+    app.user.indicators = settings.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe});
+    console.log(app.user.indicators)
   }
 </script>
