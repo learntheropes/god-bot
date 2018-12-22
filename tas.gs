@@ -66,11 +66,11 @@ function INDICATORS(ohlcv) {
     return CCI(this.high, this.low, this.close, settings.periods);
   };
   
-  function DMA(close, fastperiod, slowperiod) {
-    if (!fastperiod) { fastperiod = 10; }
-    if (!slowperiod) { slowperiod = 50; }
-    var result1 = SMA(close, fastperiod);
-    var result2 = SMA(close, slowperiod);
+  function DMA(close, fast, slow) {
+    if (!fast) { fast = 10; }
+    if (!slow) { slow = 50; }
+    var result1 = SMA(close, fast);
+    var result2 = SMA(close, slow);
     var dif = [];
     for (var i = 0; i < close.length; i++) {
       dif.push(result1[i] - result2[i]);
@@ -79,7 +79,7 @@ function INDICATORS(ohlcv) {
   }
   
   this.DMA = function(settings) {
-    return DMA(this.close, settings.fastperiod, settings.slowperiod);
+    return DMA(this.close, settings.fast, settings.slow);
   };
   
   
@@ -486,17 +486,17 @@ function INDICATORS(ohlcv) {
     return EMA(this.close, settings.periods);
   };
   
-  function MACD(close, fastperiod, slowperiod, signalperiod) {
-    if (!fastperiod) { fastperiod = 12; }
-    if (!slowperiod) { slowperiod = 26; }
-    if (!signalperiod) { signalperiod = 9; }
-    var ema1 = EMA(close, fastperiod);
-    var ema2 = EMA(close, slowperiod);
+  function MACD(close, fast, slow, signal) {
+    if (!fast) { fast = 12; }
+    if (!slow) { slow = 26; }
+    if (!signal) { signal = 9; }
+    var ema1 = EMA(close, fast);
+    var ema2 = EMA(close, slow);
     var diff = [];
     for (var i = 0; i < close.length; i++) {
       diff.push(ema2[i] - ema1[i]);
     }
-    var dea = SMA(diff, signalperiod);
+    var dea = SMA(diff, signal);
     var macd = [];
     for (var i = 0; i < close.length; i++) {
       if (dea[i] !== null) {
@@ -510,7 +510,7 @@ function INDICATORS(ohlcv) {
   };
   
   this.MACD = function(settings){
-    return MACD(this.close, settings.fastperiod, settings.slowperiod, settings.signalperiod);
+    return MACD(this.close, settings.fast, settings.slow, settings.signal);
   };
   
   function MTM(close, periods) {

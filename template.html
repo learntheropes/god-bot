@@ -22,7 +22,7 @@
     <?var url = getScriptUrl();?>
   </head>
   <body>
-    <section class="hero is-fullheight">
+    <section class="hero is-fullheight is-light">
       <!-- Hero head: will stick at the top -->
       <div class="hero-head">
         <header class="navbar">
@@ -74,6 +74,6 @@
     </section>
     <?!= HtmlService.createHtmlOutputFromFile(page + '.js').getContent(); ?>
     <?!= HtmlService.createHtmlOutputFromFile('bulma.js').getContent(); ?>
-    <?!= HtmlService.createHtmlOutputFromFile('dom_lib.js').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('bulma_lib.js').getContent(); ?>
   </body>
 </html>

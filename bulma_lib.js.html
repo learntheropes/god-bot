@@ -1,0 +1,371 @@
+<script>
+
+var ifClasses = function(el, classes) {
+  if (classes) {
+    classes.forEach(function(cl) {
+      this.el.classList.add(cl);
+    }, {el: el});
+  }
+};
+
+var ifAttributes = function(el, attributes) {
+  if (attributes) {
+    Object.keys(attributes).forEach(function(key) {
+      this.el.setAttribute(key, this.attributes[key]);
+    }, {el: el, attributes: attributes})
+  }
+};
+
+
+
+
+bulma_lib = {};
+
+bulma_lib.element = {
+  
+  make: function(tag, attributes, classes) {
+    var element = document.createElement(tag);
+    ifAttributes(element, attributes);
+    ifClasses(element, classes);
+    this.element = element;
+    return this;
+  },
+  
+  childs: function(element1,element2) {
+    var elements = Array.prototype.slice.call(arguments);
+    elements.forEach(function(element) {
+      this.parent.appendChild(element);
+    }, {parent: this.element})
+    return this;
+  },
+  
+  width: function(size) {
+    var column = document.createElement('div');
+    column.classList.add('column', size);
+    var child = this.element;
+    column.appendChild(child);
+    this.element = column;
+    return this.element;
+  } 
+}
+
+function foobartest() {
+  var foo = bulma_lib.element.make('input',{type:'text'},['input']).width('is-8').toString()
+  
+}
+
+bulma_lib.icon = {
+
+  // is-small default class.
+  make: function(icon_name, classes) {
+    
+    var icon = document.createElement('span');
+    icon.classList.add('icon');
+    icon.classList.add('is-small');
+    if (classes) classes.forEach(function(cl) {
+      icon.classList.add(cl);  
+    });
+      
+    var i = document.createElement('i');
+    i.setAttribute('class', icon_name);
+    i.setAttribute('aria-hidden', "true");
+      
+    icon.appendChild(i);
+    return icon;    
+  },
+  
+  toggle: function(element, icon1, icon2) {
+    if (element.classList.contains(icon1)) {
+      element.classList.replace(icon1, icon2);
+    } else {
+      element.classList.replace(icon2, icon1);
+    }
+  },
+}
+
+bulma_lib.input = {
+
+  // attributes.type = type="text", "password", "email", "tel"
+  make: function(width, label_element, attributes, classes, icon_left, icon_right) {
+    
+    var field = document.createElement('div');
+    field.classList.add('field');
+    if (width) field.classList.add(width);
+    
+    var control = document.createElement('p');
+    control.classList.add('control');
+    if (icon_left) control.classList.add('has-icons-left');
+    if (icon_right) control.classList.add('has-icons-right');
+    
+    var input = document.createElement('input');
+    input.classList.add('input');
+    ifAttributes(input, attributes);
+    ifClasses(input, classes);
+    control.appendChild(input);
+    
+    if (label_element) field.appendChild(label_element);
+    if (icon_left) control.appendChild(bulma_lib.icon.make(icon_left));
+    if (icon_right) control.appendChild(bulma_lib.icon.make(icon_right));
+    
+    field.appendChild(control);
+    return field;
+  },
+  
+  makeWithButton: function(div_attributes, div_classes, key, value) {
+    
+    var div = document.createElement('div');
+    div.classList.add('field','has-addons');
+    ifAttributes(div, div_attributes);
+    ifClasses(div, div_classes);
+    
+    var control_input = document.createElement('p');
+    control_input.classList.add('control', 'is-fullwidth');
+    
+    var input = document.createElement('input');
+    input.classList.add('input', 'is-fullwidth');
+    input.setAttribute('type', 'text');
+    input.setAttribute('placeholder', value);
+    control_input.appendChild(input);
+
+    var control_button = document.createElement('p');
+    control_button.classList.add('control');
+    
+    var button = document.createElement('a');
+    button.classList.add('button', 'is-static');
+    button.innerText = key
+    control_button.appendChild(button);
+
+    div.appendChild(control_button);
+    div.appendChild(control_input);
+    return div;
+  },
+}
+
+
+bulma_lib.button = {
+
+  make: function(button_text, icon_name, attributes, classes) {
+  
+    var field = bulma_lib.div.make({},['field']);
+    if (button_text && icon_name) field.classList.add('has-addons');
+
+    var button = document.createElement('button');
+    button.classList.add('button');
+    ifAttributes(button, attributes)
+    ifClasses(button, classes);
+
+    if (button_text) {
+      var text = document.createElement('span');
+      text.innerText = button_text;
+    }
+    
+    if (icon_name) button.appendChild(bulma_lib.icon.make(icon_name));
+    if (button_text) button.appendChild(text);
+    field.appendChild(button);
+    return field;
+  },
+  
+  unfocus: function(element) {
+    element.classList.remove('is-focused')
+  }
+}
+
+bulma_lib.buttonsList = {
+
+  make: function(list_names, list_icons, width, list_attributes, list_classes, button_attributes, button_classes) {
+  
+    var buttons = document.createElement('div');
+    buttons.classList.add('buttons');
+    buttons.classList.add('has-addons');
+    if (width) buttons.classList.add(width);
+    ifAttributes(buttons, list_attributes)
+    ifClasses(buttons, list_classes);
+    
+    list_names.forEach(function(el, i) {
+      this.attributes.value = el;
+      var icon = (list_icons) ? this.icons[i] : null;
+      var button = bulma_lib.button.make(el, icon, this.attributes, this.classes)
+      buttons.appendChild(button.firstChild);
+    }, {icons: list_icons, attributes: button_attributes || {}, classes: button_classes || []});
+
+    return buttons;
+  },
+};
+  
+bulma_lib.label = {
+    
+  make: function(text, attributes, classes) {
+    var label_p = document.createElement('p')
+    ifAttributes(label_p, attributes);
+    ifClasses(label_p, classes);
+    label_p.innerText = text;
+    return label_p;
+  },
+  
+  makeStandalone: function(text, width, attributes, classes) {
+    var label_p = bulma_lib.label.make(text, attributes, classes);
+    var label_div = document.createElement('div');
+    label_div.classList.add('column');
+    if (width) label_div.classList.add(width);
+    label_div.appendChild(label_p)
+    return label_div;
+  },
+}
+ 
+bulma_lib.div = {
+
+  make: function(attributes, classes) {
+    var div = document.createElement('div');
+    ifAttributes(div, attributes);
+    ifClasses(div, classes);
+    return div;
+  },
+}
+ 
+bulma_lib.option = {
+ 
+  make: function(text, attributes, classes) {
+    var option = document.createElement('option');
+    ifAttributes(option, attributes);
+    ifClasses(option, classes);
+    option.setAttribute('value', text);
+    option.innerText = text;
+    return option;
+   }
+ }
+ 
+bulma_lib.select = {
+ 
+  make: function(options, width, size, label){
+
+    var option_header_attributes = {value: null, selected: true, disabled: true};
+    var option_header = bulma_lib.option.make(label, option_header_attributes, []);
+
+    var select_tag = document.createElement('select');
+    select_tag.setAttribute('size', size);
+    select_tag.appendChild(option_header);
+    
+    options.forEach(function(option) {
+      var option_tag = bulma_lib.option.make(option,{value: option},[]);
+      this.select_tag.appendChild(option_tag);
+    }, {select_tag: select_tag});
+   
+    var div_select = bulma_lib.div.make({}, ['select','is-fullwidth'])
+    div_select.appendChild(select_tag);
+   
+    var div_column = bulma_lib.div.make({}, ['column',width])
+    div_column.appendChild(div_select);
+    return div_column;   
+  },
+  
+  getSelected: function(el) {
+  
+    var options = Array.prototype.slice.call(el,0);
+    
+    return options.filter(function(option) {
+    
+      return  option.selected;
+    });  
+  },
+}
+
+bulma_lib.choices = {
+  
+  getSelected: function(div) {
+
+    var arr = Array.prototype.slice.call(div.childNodes, 0);
+    return arr.filter(function(option) {
+    
+      return  option.checked;
+    }).map(function(option) {
+    
+      return option.value;
+    });
+  },
+}
+
+bulma_lib.horizontalForm = {
+  
+  make: function(components, width, attributes, classes) {
+  
+    var form = document.createElement('div');
+    form.classList.add('columns', width);
+    ifAttributes(form, attributes);
+    ifClasses(form, classes);
+    components.forEach(function(component) {
+      form.appendChild(component);
+    })
+    return form;
+  },
+}
+
+
+bulma_lib.appendElement = function(target_name, element) {
+  var target = document.getElementById(target_name)
+  target.appendChild(element);   
+};
+
+  function makeDropdown(choices_array, action){
+    
+    var field = document.createElement('div');
+    field.classList.add('field');
+    
+    var dropdown_content = document.createElement('div');
+    dropdown_content.classList.add('dropdown-content')
+    
+    choices_array.forEach(function(el) {
+          
+      var a = document.createElement('a');
+      if (this.action) a.setAttribute('onclick', this.action);
+      a.setAttribute('value', el);
+      a.classList.add('dropdown-item');
+      a.innerText = el;
+      
+      this.content.appendChild(a);
+    }, {content: dropdown_content, action: action});
+                
+    var dropdown = document.createElement('div');
+    dropdown.classList.add('dropdown');
+    dropdown.classList.add('is-up');
+    
+    var dropdown_trigger = document.createElement('div');
+    dropdown_trigger.classList.add('dropdown-trigger');
+    
+    var button = document.createElement('button');
+    button.classList.add('button');
+    button.setAttribute('id','foobar');
+    button.setAttribute('aria-haspopup','true');
+    button.setAttribute('aria-controls','dropdown-menu');
+    
+    var dropdown_menu = document.createElement('div');
+    dropdown_menu.classList.add('dropdown-menu');
+    dropdown_menu.setAttribute('id','dropdown-menu');
+    dropdown_menu.setAttribute('role', 'menu');
+    
+    var txt = document.createElement('span');
+    txt.innerText = 'Indicators';
+        
+    var i = document.createElement('i');
+    i.classList.add('fas');
+    i.classList.add('fa-angle-up');
+    i.setAttribute('aria-hidden', 'true');
+    
+    var icon = document.createElement('span');
+    icon.classList.add('icon');
+    icon.classList.add('is-small');
+    
+    icon.appendChild(i);
+    button.appendChild(txt);
+    button.appendChild(icon);
+    dropdown_trigger.appendChild(button);
+    dropdown_menu.appendChild(dropdown_content);
+    dropdown.appendChild(dropdown_trigger);
+    dropdown.appendChild(dropdown_menu);
+    field.appendChild(dropdown)
+    return field;
+  };
+
+</script>
+
+
+
