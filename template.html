@@ -38,12 +38,19 @@
               </span>
             </div>
             <div id="navbarMenuHeroC" class="navbar-menu">
-              <div class="navbar-end">
+              <div class="navbar-start">
                 <a class="navbar-item" href="<?=url?>?page=datasets">Datasets</a>
                 <a class="navbar-item" href="<?=url?>?page=strategies">Strategies</a>
                 <a class="navbar-item" href="<?=url?>?page=backtests">Backtests</a>
                 <a class="navbar-item" href="<?=url?>?page=signals">Trading Signals</a>
                 <a class="navbar-item" href="<?=url?>?page=live">Live Trading</a>
+              </div>
+              <div class="navbar-end">
+                <div class="navbar-item">
+                  <div class="buttons">
+                    <a class="button is-light">Log in</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -52,7 +59,7 @@
 
       <!-- Hero content: will be in the middle -->
       <div class="hero-body">
-        <div class="container has-text-centered">
+        <div class="container">
           <?!= HtmlService.createHtmlOutputFromFile(page).getContent(); ?>
         </div>
       </div>
@@ -62,11 +69,7 @@
         <nav class="tabs is-boxed is-fullwidth">
           <div class="container">
             <ul>
-              <li><a>foobar</a></li>
-              <li><a>foobar</a></li>
-              <li><a>foobar</a></li>
-              <li><a>foobar</a></li>
-              <li><a>foobar</a></li>
+              <li><a>coinfused</a></li>
             </ul>
           </div>
         </nav>

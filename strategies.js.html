@@ -1,12 +1,15 @@
 <script>
-  
+
+  var _ = _u;
+
   app = {};
   
   app.user = {
     timeframes: [],
     indicators: [],
     conditions: [],
-    actions: []
+    actions: [],
+    indicatorsSlug: []
   }
   
   app.default = {
@@ -26,17 +29,11 @@
       TRIX: {periods: 12}
     }
   }
-
-   /* 
-  window.onload = function() {
-    const button = document.querySelector('.button');
-    const dropdown = document.querySelector('.dropdown');
-    button.onclick = function(){
-      dropdown.classList.toggle('is-active');
-    };
    
+  window.onload = function() {
+
   };
- */
+ 
  
 function toggleIndicatorsList() {
   
@@ -52,73 +49,64 @@ function toggleIndicatorsList() {
 
   } else {
     var keys = Object.keys(app.default.indicators);
-    var button_attributes = {type: 'submit',onclick: 'appendIndicatorForm(this)'};
-    var el = bulma_lib.buttonsList.make(keys,null,null,{},[],button_attributes,['is-fullwidth'])
+    var button_attributes = {type: 'submit',onclick: 'indicatorListActions(this.value)'};
+    var el = bulma_lib.buttonsList.make({}, ['is-right'], keys, [], button_attributes, ['is-narrow'])
     target.appendChild(el);
   }
 };
-  
-  
-///INDICATOR FORM///
-function newIndicatorForm(text) {
 
-  // indicator_name
-  var conditions_components = [bulma_lib.label.makeStandalone(text,'is-1',{},['is-pulled-right'])];
-  
-  // setting
-  var settings_keys = Object.keys(app.default.indicators[text]);
-  if (settings_keys.length === 0) conditions_components.push(bulma_lib.div.make({},['column', 'is-6']))
-  settings_keys.forEach(function(label) {
-    var json_settings = this.indicators[this.text], json_keys = Object.keys(json_settings);
-    var setting_column = bulma_lib.div.make({},['column', ('is-' + (6 / json_keys.length).toString())]);
-    setting_column.appendChild(bulma_lib.input.makeWithButton({}, ['is-fullwidth'], label, json_settings[label]));
-    this.conditions_components.push(setting_column);
-  }, {conditions_components: conditions_components, text: text, indicators: app.default.indicators})
-  
-  //timeframes
-  conditions_components.push(bulma_lib.select.make(app.default.timeframes, 'is-2', 1, 'tf'))
-  
-  //delete_button
-  var del_col = bulma_lib.div.make({},['column', 'is-1'])
-  var del_el = bulma_lib.button.make(null,'far fa-trash-alt', {onclick: 'deleteIndicatorForm(this)'},[]);
-  del_col.appendChild(del_el)
-  conditions_components.push(del_col)
 
-  return bulma_lib.horizontalForm.make(conditions_components, 'is-10', {'onchange': 'indicatorActions()'}, ['is-desktop','is-vcentered']);
+function fieldControl(el, control_classes, field_classes) {
+  control_classes = ['control'].concat(control_classes ||[]);
+  field_classes = ['field'].concat(field_classes ||[]);
+  var el_control =  bulma_lib.element.make('div', {}, control_classes).childs(el).element
+  return bulma_lib.element.make('div', {}, field_classes).childs(el_control).element
 }
-
-///END INDICATOR FORM///
-
   
-  function appendIndicatorForm(input) {
-    console.log(input)
-    bulma_lib.button.unfocus(input);
-    var indicator_form = newIndicatorForm(input.getAttribute("value"));
-    bulma_lib.appendElement('indicators', indicator_form);
-  };
+function newIndicatorForm(text) {
   
-  function indicatorActions() {
-
-    var settings = Array.prototype.slice.call(document.getElementById('indicators').querySelectorAll('div[name="IndicatorForm"]')).map(function(node) {
-      var indicator = Array.prototype.slice.call(node.querySelectorAll('label'),0).map(function(a) { return a.outerText})
-      var keys = Array.prototype.slice.call(node.querySelectorAll('a'),0).map(function(a) { return a.outerText})
-      var values = Array.prototype.slice.call(node.querySelectorAll('input'),0).map(function(a) { return a.value || a.placeholder })
-      var timeframe = bulma_lib.select.getSelected(node.querySelectorAll("option"))[0].value
-      return {indicator: indicator, keys: keys, values: values, timeframe: timeframe};
-    })
-    
-    function onlyUnique(value, index, self) {
-      return (self.indexOf(value) === index && value !== 'Timeframe');
-    }
-
-    app.user.timeframes = app.default.timeframes.filter(function(tf) {
-      return this.unique.indexOf(tf) > -1;
-    }, {unique: settings.map(function(tf) { return tf.timeframe; }).filter(onlyUnique)});
-    
-    app.user.indicators = settings.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe});
+  var l = bulma_lib.element.make('label', {}, ['label'], text).element
+  var label = bulma_lib.element.make('div', {name: 'indicatorName'}, ['field-label', 'is-normal']).element
+  label.appendChild(l);
+  
+  var form_attibutes = {
+    name: 'indicatorForm',
+    onchange: 'indicatorFormActions()'
   }
+  var form = bulma_lib.element.make('div', form_attibutes, ['field', 'is-horizontal']).element;
+  form.appendChild(label)
+
+  var field_body = bulma_lib.element.make('div', {}, ['field-body']).element
   
-  function newConditionForm(options,action) {
+  // setting 
+  Object.keys(app.default.indicators[text]).map(function(label, index, self) {
+    
+    var button = bulma_lib.element.make('button', {}, ['button', 'is-static'], label).element;
+    var input = bulma_lib.element.make('input', {type: 'text', placeholder: (label,this.indicators[this.text][label])}, ['input', 'is-fullwidth'], label).element;
+    var button_input = bulma_lib.addon(button, input, null, ['is-expanded']);
+    var field = bulma_lib.element.make('div', {}, ['field']).element
+    field.appendChild(button_input)
+    this.field_body.appendChild(field)
+  }, {text: text, indicators: app.default.indicators, field_body: field_body})
+  
+  // timeframes
+  var tf = fieldControl(bulma_lib.select.make({size: 1}, [], ['timeframe'].concat(app.default.timeframes)));
+  field_body.appendChild(tf)
+  
+  // delete_button
+  var button_attributes = {
+    onclick: 'deleteIndicatorActions(this)'
+  }
+  var delete_button = bulma_lib.button.make(button_attributes, [],null,'far fa-trash-alt');
+  field_body.appendChild(delete_button)
+  
+  form.appendChild(field_body)
+  
+  return form;
+ 
+};
+
+  function newConditionForm(options, action) {
   
     var ohlcv = app.user.timeframes.map(function(tf) {
       return ['open', 'close', 'high', 'low', 'volume'].map(function(el) {
@@ -127,23 +115,99 @@ function newIndicatorForm(text) {
     }).flat();
     var all_indicators = app.user.indicators.concat(ohlcv);
 
-    var indicators_left =  bulma_lib.select.make(all_indicators, 'is-2', 1, 'Indicators');
-    var operator = bulma_lib.buttonsList.make(['<','=','>'], null, 'is-2', null, ['is-centered']);
-    var indicators_right =  bulma_lib.select.make(all_indicators, 'is-2', 1, 'Indicators');
+    var indicators_left =  bulma_lib.select.make(all_indicators, null, 1, 'Indicators');
+    
+    var operator_col = bulma_lib.div.make({},['column']);
+    operator_col.appendChild(bulma_lib.buttonsList.make(['<','=','>'], null, null, null, ['is-centered']))
+    var indicators_right =  bulma_lib.select.make(all_indicators, null, 1, 'Indicators');
     var delete_button = bulma_lib.button.make(null,'far fa-trash-alt', {onclick: 'deleteIndicatorForm(this)'});
 
-    var form_components = [indicators_left,operator,indicators_right,delete_button]
+    var form_components = [
+      indicators_left,
+      operator_col,
+      indicators_right,
+      delete_button
+    ]
+   
+    return bulma_lib.horizontalForm.make(form_components, 'is-12', {'onchange': action}, ['is-desktop','is-vcentered']);
+  }
+  
+function appendIndicatorForm(input) {
 
-    return bulma_lib.horizontalForm.make('is-10', form_components, {'onchange': action}, ['is-desktop','is-vcentered']);
-  }
+  var indicator_form = newIndicatorForm(input);
+  bulma_lib.appendElement('indicators-forms', indicator_form);
+};
     
-  function appendConditionForm() {
-    bulma_lib.appendElement('conditions', newConditionForm());
+function appendConditionForm() {
+
+  var condition_form = newConditionForm();
+  bulma_lib.appendElement('conditions-forms', condition_form);
+}
+
+
+  
+function getUserIndicators() {
+  return Array.prototype.slice.call(document.getElementById('indicators-forms')
+  .querySelectorAll('div[name=indicatorForm]')).map(function(node) {
+  
+    var tf = node.querySelector('select').selectedOptions[0].value;
+    var tf = (tf === 'null') ? null : tf;
+    
+    return {
+      name: node.querySelector('p[name="indicatorName"]').innerText,
+      keys: Array.prototype.slice.call(node.querySelectorAll('a')).map(function(el) {
+        return el.outerText;
+      }),
+      values: Array.prototype.slice.call(node.querySelectorAll('input')).map(function(el) {
+        return el.value || el.placeholder;
+      }),
+      timeframe: node.querySelector('select').selectedOptions[0].value,
+    }
+  });
+};
+  
+function getUserTimeframes(user_indicators) {
+
+  function onlyUnique(value, index, self) { 
+    return self.indexOf(value) === index;
   }
-  
-  
-  
-  function deleteIndicatorForm(e) {
-    e.parentNode.parentNode.parentNode.remove();
-  }
+
+  return _.compact(user_indicators.map(function(e) {return e.timeframe}).filter(onlyUnique));
+};
+
+function getUserIndicatorsSlug(user_indicators) {
+
+  return user_indicators.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe})
+};
+
+function updateUserApp() {
+
+  var user_indicators = getUserIndicators();
+  app.user.indicators = user_indicators;
+  app.user.timeframes = getUserTimeframes(user_indicators);
+  // console.log(app.user.timeframes)
+  app.user.indicatorsSlug = getUserIndicatorsSlug(user_indicators);
+}
+
+// MAIN ACTIONS
+function indicatorListActions(input) {
+
+  appendIndicatorForm(input);
+  // updateUserApp();
+}
+
+function deleteIndicatorActions(input) {
+
+  input.parentNode.parentNode.parentNode.parentNode.remove();
+  // updateUserApp();
+  // updateConditionsDropdowns();
+}
+
+function indicatorFormActions() {
+
+  // updateUserApp();
+  // updateConditionsDropdowns();
+}
+// END MAIN ACTIONS
+
 </script>

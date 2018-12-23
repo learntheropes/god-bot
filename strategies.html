@@ -1,37 +1,83 @@
-<div class="columns ls-12 is-desktop is-vcentered"> <!-- Start of columns -->
 
-  <div id="left-column" class="column is-2"> <!-- Start of left column -->
-    <div class="field">
-      <div id="indicators-list" class="control"></div>
+    <div id="indicators" class="box">
+      <nav class="level">
+          <div class="level-left">
+            <div class="level-item"><h6 class="title is-6">Indicators</h6></div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="field">
+                <div id="indicators-list" class="control"></div>
+              </div>
+            </div>
+            <div class="level-item">
+              <div class="field has-addons">
+                <a class="button is-narrow" onclick="toggleIndicatorsList()">
+                  <span class="icon is-small">
+                    <i id="plus-minus-indicators" class="fas fa-plus"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+      </nav>
+      <div id="indicators-forms"></div>
     </div>
-    <div class="field has-addons">
-      <a class="button is-fullwidth" onclick="toggleIndicatorsList()">
-        <span>New Indicator</span>
-        <span class="icon is-small">
-          <i id="plus-minus-indicators" class="fas fa-plus" aria-hidden="true"></i>
-        </span>
-      </a>
+    
+    <div id="conditions" class="box">
+      <nav class="level is-mobile">
+          <div class="level-left">
+            <div class="level-item"><h6 class="title is-6">Conditions</h6></div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="field has-addons">
+                <a class="button is-narrow" onclick="appendConditionForm()">
+                  <span class="icon is-small">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+      </nav>
+      <div id="conditions-forms" class="is-centered"></div>
     </div>
-    <div class="field">
-      <a class="button is-fullwidth" onclick="appendConditionForm()">
-        <span>New Condition</span>
-      </a>
+    
+    <div id="groups" class="box">
+      <nav class="level is-mobile">
+          <div class="level-left">
+            <div class="level-item"><h6 class="title is-6">Groups</h6></div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="field has-addons">
+                <a class="button is-narrow" onclick="appendGroupForm()">
+                  <span class="icon is-small">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+      </nav>
     </div>
-    <div class="field">
-      <a class="button is-fullwidth" onclick="appendGroupForm()">
-        <span>New Group</span>
-      </a>
+    
+    <div id="actions" class="box">
+      <nav class="level is-mobile">
+          <div class="level-left">
+            <div class="level-item"><h6 class="title is-6">Actions</h6></div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="field has-addons">
+                <a class="button is-narrow" onclick="appendActionForm()">
+                  <span class="icon is-small">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+      </nav>
     </div>
-    <div class="field">
-      <a class="button is-fullwidth" onclick="appendActionForm()">
-        <span>New Action</span>
-      </a>
-    </div>
-  </div> <!-- End of left column -->
-  
-  <div id="right-column" class="column is-10"> <!-- Start of right column -->
-    <div id="indicators" class="box is-fullwidth"></div>
-    <div id="conditions" class="box"></div>
-  </div> <!-- End of right column -->
-  
-</div> <!-- End of columns -->
