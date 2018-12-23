@@ -64,6 +64,7 @@ function fieldControl(el, field_classes, control_classes) {
   
 function newIndicatorForm(text) {
   
+  // label
   var l = bulma_lib.element.make('label', {}, ['label'], text).element
   var label = bulma_lib.element.make('div', {name: 'indicatorName'}, ['field-label', 'is-normal']).element
   label.appendChild(l);
@@ -90,11 +91,9 @@ function newIndicatorForm(text) {
     if ((self.length === index+1) && self.length < 3) {
       var i = self.length;
       while (i < 3) {
-        var button = bulma_lib.element.make('button', {}, ['button', 'is-static'], '     ').element;
         var input = bulma_lib.element.make('input', {type: 'text', disabled: true}, ['input', 'is-fullwidth']).element;
-        var button_input = bulma_lib.addon(button, input, null, ['is-expanded']);
         var field = bulma_lib.element.make('div', {}, ['field']).element
-        field.appendChild(button_input)
+        field.appendChild(fieldControl(input))
         this.field_body.appendChild(field)
         i++;
       }
@@ -113,9 +112,7 @@ function newIndicatorForm(text) {
   field_body.appendChild(delete_button)
   
   form.appendChild(field_body)
-  
   return form;
- 
 };
 
   function newConditionForm(options, action) {
@@ -161,18 +158,15 @@ function appendConditionForm() {
 function getUserIndicators() {
   return Array.prototype.slice.call(document.getElementById('indicators-forms')
   .querySelectorAll('div[name=indicatorForm]')).map(function(node) {
-  
-    var tf = node.querySelector('select').selectedOptions[0].value;
-    var tf = (tf === 'null') ? null : tf;
     
     return {
-      name: node.querySelector('p[name="indicatorName"]').innerText,
-      keys: Array.prototype.slice.call(node.querySelectorAll('a')).map(function(el) {
+      name: node.querySelector('div[name="indicatorName"]').firstChild.innerText,
+      keys: Array.prototype.slice.call(node.querySelectorAll('button.button.is-static')).map(function(el) {
         return el.outerText;
       }),
-      values: Array.prototype.slice.call(node.querySelectorAll('input')).map(function(el) {
-        return el.value || el.placeholder;
-      }),
+      values: Array.prototype.slice.call(node.querySelectorAll('input'))
+        .filter(function(el) { return !el.disabled})
+        .map(function(el) {return el.value || el.placeholder;}),
       timeframe: node.querySelector('select').selectedOptions[0].value,
     }
   });
@@ -189,36 +183,46 @@ function getUserTimeframes(user_indicators) {
 
 function getUserIndicatorsSlug(user_indicators) {
 
-  return user_indicators.map(function(s) {return s.indicator + '(' + s.values.join(',') + ').' + s.timeframe})
+  return user_indicators
+  .filter(function(s) {
+    return s.timeframe
+  })
+  .map(function(s) {
+    return s.name
+    + '(' + s.values.join(',') + ').'
+    + s.timeframe
+  })
 };
 
 function updateUserApp() {
 
   var user_indicators = getUserIndicators();
   app.user.indicators = user_indicators;
+  console.log(app.user.indicators)
   app.user.timeframes = getUserTimeframes(user_indicators);
-  // console.log(app.user.timeframes)
+  console.log(app.user.timeframes)
   app.user.indicatorsSlug = getUserIndicatorsSlug(user_indicators);
+  console.log(app.user.indicatorsSlug)
 }
 
 // MAIN ACTIONS
 function indicatorListActions(input) {
 
   appendIndicatorForm(input);
-  // updateUserApp();
+  updateUserApp();
 }
 
 function deleteIndicatorActions(input) {
 
   input.parentNode.parentNode.parentNode.remove();
-  // updateUserApp();
-  // updateConditionsDropdowns();
+  updateUserApp();
+  //updateConditionsDropdowns();
 }
 
 function indicatorFormActions() {
 
-  // updateUserApp();
-  // updateConditionsDropdowns();
+  updateUserApp();
+  //updateConditionsDropdowns();
 }
 // END MAIN ACTIONS
 
