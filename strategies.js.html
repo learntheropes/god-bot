@@ -23,7 +23,6 @@
       EMA: {periods: 30},
       MACD: {fast: 12,slow: 26,signal: 9},
       MTM: {periods: 9},
-      OBV : {},
       ROC: {periods: 12},
       RSI: {periods: 14},
       TRIX: {periods: 12}
@@ -56,7 +55,7 @@ function toggleIndicatorsList() {
 };
 
 
-function fieldControl(el, control_classes, field_classes) {
+function fieldControl(el, field_classes, control_classes) {
   control_classes = ['control'].concat(control_classes ||[]);
   field_classes = ['field'].concat(field_classes ||[]);
   var el_control =  bulma_lib.element.make('div', {}, control_classes).childs(el).element
@@ -87,6 +86,19 @@ function newIndicatorForm(text) {
     var field = bulma_lib.element.make('div', {}, ['field']).element
     field.appendChild(button_input)
     this.field_body.appendChild(field)
+    
+    if ((self.length === index+1) && self.length < 3) {
+      var i = self.length;
+      while (i < 3) {
+        var button = bulma_lib.element.make('button', {}, ['button', 'is-static'], '     ').element;
+        var input = bulma_lib.element.make('input', {type: 'text', disabled: true}, ['input', 'is-fullwidth']).element;
+        var button_input = bulma_lib.addon(button, input, null, ['is-expanded']);
+        var field = bulma_lib.element.make('div', {}, ['field']).element
+        field.appendChild(button_input)
+        this.field_body.appendChild(field)
+        i++;
+      }
+    }
   }, {text: text, indicators: app.default.indicators, field_body: field_body})
   
   // timeframes
@@ -198,7 +210,7 @@ function indicatorListActions(input) {
 
 function deleteIndicatorActions(input) {
 
-  input.parentNode.parentNode.parentNode.parentNode.remove();
+  input.parentNode.parentNode.parentNode.remove();
   // updateUserApp();
   // updateConditionsDropdowns();
 }
