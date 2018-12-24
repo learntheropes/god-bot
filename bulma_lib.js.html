@@ -1,5 +1,7 @@
 <script>
 
+var _ = _u;
+
 var ifClasses = function(el, classes) {
   if (classes) {
     classes.filter(function(cl) {
@@ -74,29 +76,36 @@ bulma_lib.icon = {
   },
 }
 
-bulma_lib.addon = function(el1, el2, obj_class, control_class) {
+// field_class is an array
+// control_class is a two dimensional array
+bulma_lib.addon = function(addons, field_class, controls_classes) {
 
-  var obj = document.createElement('div');
-  obj.classList.add('field','has-addons');
-  if (obj_class) {
+  // assigning field_class to div.field
+  var field = document.createElement('div');
+  field.classList.add('field','has-addons');
+  if (field_class) {
     field_class.forEach(function(cl) {
-      this.obj.classList.add(cl)
-    }, {obj: obj})
+      this.field.classList.add(cl)
+    }, {field: field})
   }
-  
-  return [el1, el2].reduce(function(self, el) {
-  
-    var control = document.createElement('div')
-    control.classList.add('control')
-    control.appendChild(el)
-    if (this.control_class) {
-      this.control_class.forEach(function(cl) {
-        this.control.classList.add(cl)
-      }, {control: self.control})
+
+  // assigning each control_class to each div.control
+  return addons.reduce(function(self, el, index) {
+
+    var control = document.createElement('div');
+    control.classList.add('control');
+    
+    if (_.isArray(controls_classes) && _.isArray(controls_classes[index])) {
+    
+      self.controls_classes[index].forEach(function(cl) {
+ 
+        this.control.classList.add(cl);
+      }, {control: control});
     }
-    self.obj.appendChild(control)
+    control.appendChild(el);
+    self.field.appendChild(control);
     return self
-  }, {obj:obj, control_class: control_class})['obj'];
+  }, {field: field, controls_classes: controls_classes})['field'];
 }
   
 bulma_lib.input = {
@@ -238,11 +247,9 @@ bulma_lib.select = {
 }
 
 bulma_lib.horizontalForm = {
-  
   make: function(attributes, classes, components) {
-    
     var form = bulma_lib.div.make(attributes, ['columns'].concat(classes));
-    
+
     components.forEach(function(component) {
         form.appendChild(component);
     });
@@ -250,12 +257,17 @@ bulma_lib.horizontalForm = {
   },
 }
 
-
 bulma_lib.appendElement = function(target_name, element) {
   var target = document.getElementById(target_name)
   target.appendChild(element);   
 };
 
+bulma_lib.fieldControl = function(el, field_classes, control_classes) {
+  control_classes = ['control'].concat(control_classes ||[]);
+  field_classes = ['field'].concat(field_classes ||[]);
+  var el_control =  bulma_lib.element.make('div', {}, control_classes).childs(el).element
+  return bulma_lib.element.make('div', {}, field_classes).childs(el_control).element
+}
 </script>
 
 

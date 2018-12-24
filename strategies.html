@@ -1,3 +1,42 @@
+<h3 class="title is-4">My Strategies</h3>
+    <div id="my-strategies" class="box">
+      <nav class="level">
+          <div class="level-left">
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="field has-addons">
+                <a class="button is-narrow" onclick="">
+                  <span class="icon is-small">
+                    <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+      </nav>
+      <div id="strategies-list"></div>
+    </div>
+<h3 class="title is-4">Public Strategies</h3>
+    <div id="public-strategies" class="box">
+      <nav class="level">
+          <div class="level-left">
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="field has-addons">
+                <a class="button is-narrow" onclick="">
+                  <span class="icon is-small">
+                    <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+      </nav>
+      <div id="strategies-list"></div>
+    </div>
+<h3 class="title is-4">New Strategy</h3>
 
     <div id="indicators" class="box">
       <nav class="level">
@@ -41,13 +80,15 @@
             </div>
           </div>
       </nav>
-      <div id="conditions-forms" class="is-centered"></div>
+      <div id="conditions-forms"></div>
     </div>
     
     <div id="groups" class="box">
       <nav class="level is-mobile">
           <div class="level-left">
-            <div class="level-item"><h6 class="title is-6">Groups</h6></div>
+            <div class="level-item">
+              <h6 class="title is-6">Merged Conditions</h6>
+            </div>
           </div>
           <div class="level-right">
             <div class="level-item">
@@ -60,6 +101,13 @@
               </div>
             </div>
           </div>
+      </nav>
+      <nav class="level is-mobile">
+        <div class="level-left">
+          <div class="level-item">
+            <h6 class="subtitle is-6">Merge multiple conditions under the same name, for easy reading.</h6>
+          </div>
+        </div>
       </nav>
     </div>
     
@@ -80,5 +128,25 @@
             </div>
           </div>
       </nav>
+      <div id="actions-forms"></div>
+    </div>
+    
+    <div id="save">
+      <nav class="level is-mobile">
+        <div class="level-left"></div>
+        <div class="level-right">
+          <div class="level-item">
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input id="strategyName" class="input is-fullwidth" type="text">
+              </div>
+                <div class="control">
+                  <a class="button is-dark" onclick="saveStrategy(this.parentNode.parentNode.parentNode)">Save</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="strategyRecap"></div>
     </div>
    

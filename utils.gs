@@ -1,5 +1,9 @@
 var _ = lodash.load();
 
+function getUUID() {
+  return Utilities.getUuid();
+}
+
 Array.prototype.insert = function ( index, item ) {
     this.splice( index, 0, item );
 };
